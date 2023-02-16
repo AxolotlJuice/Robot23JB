@@ -1,16 +1,16 @@
-package frc.robot.subsystems;
+package Team4450.Robot23.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import Team4450.Lib.SynchronousPID;
-
+import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.SimultaneousArmPID;
+import Team4450.Robot23.commands.SimultaneousArmPID;
 
 public class Arm extends SubsystemBase{
 
@@ -29,11 +29,14 @@ public class Arm extends SubsystemBase{
     private SequentialCommandGroup  commands = null;
 
     public Arm(){
-        
+        Util.consoleLog("Arm created!");
     }
 
     public void initialize(){
+        
         armMotor1.getEncoder().getPosition();
+
+        Util.consoleLog();
     }
 
     public void periodic(){

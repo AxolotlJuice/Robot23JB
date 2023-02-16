@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package Team4450.Robot23.commands;
 
 
 import Team4450.Lib.*;
@@ -15,10 +15,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDriveBase;
-
-
-import static frc.robot.Constants.*;
+import Team4450.Robot23.subsystems.DriveBase;
+import Team4450.Robot23.Constants;
 
 
 public class AutoAimVision extends CommandBase {
@@ -36,7 +34,7 @@ public class AutoAimVision extends CommandBase {
     private double              elapsedTime;
 
 
-    private SwerveDriveBase     sDriveBase;
+    private DriveBase           sDriveBase;
     private PhotonCamera        phCamera;
     private PhotonPoseEstimator phPoseEstimator;
    
@@ -55,7 +53,7 @@ public class AutoAimVision extends CommandBase {
 
 
     public AutoAimVision(PhotonCamera phCamera,
-                            SwerveDriveBase sDriveBase,
+                            DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
                             Translation2d limeLightToCenter)

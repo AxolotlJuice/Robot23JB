@@ -24,7 +24,9 @@ public class AutoAimVision extends CommandBase {
 
     private static double       kP = .02, kI = .02, kD = 0;
     private double              kToleranceDeg = .5;
-    private boolean             hasTarget, targetLocked, hadTargets;
+    
+    private boolean             targetLocked, hadTargets;
+    private boolean             cubeInClaw;
    
     private double              instThrottle;
     private double              instStrafe;
@@ -49,7 +51,7 @@ public class AutoAimVision extends CommandBase {
     private AprilTagFieldLayout tagLayout;
     private Translation2d       limeLightToCenter;
 
-    private SynchronousPID          pid = new SynchronousPID(0, 0, 0);
+    private SynchronousPID          pid = new SynchronousPID(kP, kI, kD);
 
 
     public AutoAimVision(PhotonCamera phCamera,
@@ -64,6 +66,23 @@ public class AutoAimVision extends CommandBase {
         this.phPoseEstimator = phPoseEstimator;
         this.tagLayout = tagLayout;
         this.limeLightToCenter = limeLightToCenter;
+
+    }
+
+    public AutoAimVision(PhotonCamera phCamera,
+                            DriveBase sDriveBase,
+                            AprilTagFieldLayout tagLayout,
+                            PhotonPoseEstimator phPoseEstimator,
+                            Translation2d limeLightToCenter, 
+                            boolean cubeInClaw)
+    {
+       
+        this.phCamera = phCamera;
+        this.sDriveBase = sDriveBase;
+        this.phPoseEstimator = phPoseEstimator;
+        this.tagLayout = tagLayout;
+        this.limeLightToCenter = limeLightToCenter;
+        this.cubeInClaw = cubeInClaw;
 
     }
 

@@ -1,0 +1,119 @@
+Port and Button Assignments.
+
+CTRE CAN Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+3       CanCoder        LF CanCoder.
+6       CanCoder        RF CanCoder.
+9       CanCoder        LR CanCoder.
+12      CanCoder        RR CanCoder.
+15      TalonFX         Claw motor.
+
+
+SparkMax CAN Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+1       SparkMax        LF drive motor.
+2       SparkMax        LF steer motor.
+4       SparkMax        RF drive motor.
+5       SparkMax        RF steer motor.
+7       SparkMax        LR drive motor.
+8       SparkMax        LR steer motor.
+10      SparkMax        RR drive motor.
+11      SparkMax        RR steer motor.
+13      SparkMax        Winch motor.
+14      SparkMax        ARM motor.
+
+PWM Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+
+
+PDP Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+20      REV PDB         REV power distribution board.
+
+
+PCM 0 Ports
+Port	Device blk-pos	Description
+-----------------------------------------------------------------------------------
+       
+
+PCM 1 Ports
+Port	Device blk-pos	Description
+-----------------------------------------------------------------------------------
+
+
+Digital I/O Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+0       Limit Switch    Winch reset.
+1       Limit Switch    ARM reset.
+2       Limit Switch    Claw reset.
+
+
+Analog I/O Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+
+
+Driver GamePad - Left Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+Y Axis					Forward/Backward driving.
+X Axis                  Left/Right strafe (sideways movement).
+
+
+Driver GamePad - Right Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+X Axis                  Rotate.
+
+
+Driver GamePad - Buttons
+Button Name				Function
+-----------------------------------------------------------------------------------
+BACK                    Toggle field/robot orientation driving.
+START                   Align wheels to start position.
+RIGHT_BUMPER       		Switch Cameras.
+POV_90                  Switch DS tab.
+A                       Reset simulated yaw.
+B                       Reset simulated distance traveled.
+
+
+Utility GamePad - Left Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+Y Axis                  ARM In/Out, pull back (+) is in.
+
+
+Utility GamePad - Right Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+Y Axis                  Winch Up/down, pull back (+) is up.
+X Axis                  Claw Open/Close, right (+) is close, left is open.
+
+
+Utility GamePad - Buttons
+Button Name				Function
+-----------------------------------------------------------------------------------
+
+
+Dashboard Indicators/Controls
+Name					Type			Description
+-----------------------------------------------------------------------------------
+AutoTarget				boolean			True when targeting code is running.
+TargetLocked			boolean			True when targeting completed with target
+                                        detected.
+Disabled				boolean			True when robot is disabled.
+Auto Mode				boolean			True when robot is in autonomous mode.
+Teleop Mode				boolean			True when robot is in teleop mode.
+FMS						boolean			True when robot is connected to the FMS.
+Low Battery				boolean			True when battery is low.
+Overload				boolean			True when brownout has occurred.
+Auto Program            Chooser         List of autonomous programs.
+
+
+Drive Base gearbox ratios: SDS Level 1 for approx 9.28 f/s or 3 m/s.
+

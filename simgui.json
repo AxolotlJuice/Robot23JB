@@ -1,0 +1,72 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/Auto Program": "String Chooser",
+      "/SmartDashboard/Field2d": "Field2d",
+      "/SmartDashboard/Gyro2": "Gyro",
+      "/SmartDashboard/Start Pose": "String Chooser",
+      "/SmartDashboard/Start Position": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Auto Program": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field2d": {
+        "Robot": {
+          "length": 0.781000018119812,
+          "width": 0.47600001096725464
+        },
+        "Swerve Modules": {
+          "image": "resources/swerve_module.png",
+          "length": 0.4000000059604645,
+          "width": 0.4000000059604645
+        },
+        "height": 8.013679504394531,
+        "image": "resources/2023-field.png",
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Start Position": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "SmartDashboard": {
+      "Field2d": {
+        "open": true
+      },
+      "open": true
+    },
+    "transitory": {
+      "Shuffleboard": {
+        "Drivetrain": {
+          "Front Left Module": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "Gyro2": {
+          "open": true
+        },
+        "Version": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  }
+}

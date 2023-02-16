@@ -1,0 +1,105 @@
+package Team4450.Robot23.commands;
+
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+
+import static Team4450.Robot23.Constants.*;
+import Team4450.Robot23.subsystems.DriveBase;
+
+import java.util.function.DoubleSupplier;
+
+import Team4450.Lib.LCD;
+import Team4450.Lib.Util;
+
+public class DriveCommand extends CommandBase 
+{
+    private final DriveBase driveBase;
+
+    private final DoubleSupplier throttleSupplier;
+    private final DoubleSupplier strafeSupplier;
+    private final DoubleSupplier rotationSupplier;
+    private final XboxController controller;
+    
+    private final SlewRateLimiter slewX = new SlewRateLimiter(THROTTLE_SLEW);
+    private final SlewRateLimiter slewY = new SlewRateLimiter(THROTTLE_SLEW);
+    private final SlewRateLimiter slewRot = new SlewRateLimiter(ROTATION_SLEW);
+
+    public DriveCommand(DriveBase driveBase,
+                        DoubleSupplier throttleSupplier,
+                        DoubleSupplier strafeSupplier,
+                        DoubleSupplier rotationSupplier,
+                        XboxController controller) 
+    {
+        Util.consoleLog();
+
+        this.driveBase = driveBase;
+        this.throttleSupplier = throttleSupplier;
+        this.strafeSupplier = strafeSupplier;
+        this.rotationSupplier = rotationSupplier;
+        this.controller = controller;
+
+        addRequirements(driveBase);
+    }
+
+    @Override
+    public void execute() 
+    {
+        LCD.printLine(2, "rx=%.3f  ry=%.3f  throttle=%.3f  strafe=%.3f  rot=%.3f",
+            controller.getRightX(),
+            controller.getRightY(),
+            throttleSupplier.getAsDouble(),
+            strafeSupplier.getAsDouble(),
+            rotationSupplier.getAsDouble()
+        );
+
+        LCD.printLine(3, "lx=%.3f  ly=%.3f  gyro=%.3f  yaw=%.3f",
+            controller.getLeftX(),
+            controller.getLeftY(),
+            driveBase.getGyroRotation2d().getDegrees(),
+            driveBase.getGyroYaw()
+        );
+
+        double throttle = deadband(throttleSupplier.getAsDouble(), THROTTLE_DEADBAND);
+        double strafe = deadband(strafeSupplier.getAsDouble(), THROTTLE_DEADBAND);
+        double rotation = deadband(rotationSupplier.getAsDouble(), ROTATION_DEADBAND);
+
+        // Have to invert for sim...not sure why.
+        if (RobotBase.isSimulation()) rotation *= -1;
+
+        // Both squaring inputs and slew rate limiters are ways to slow down
+        // or smooth response to the joystick inputs. Will test both methods.
+
+        // Squaring seemed to really slow throttle response.
+        //throttle = squareTheInput(throttle);
+        //strafe = squareTheInput(strafe);
+        
+        rotation = squareTheInput(rotation);
+
+        throttle = slewX.calculate(throttle);
+        strafe = slewY.calculate(strafe);
+        rotation = slewRot.calculate(rotation);
+
+        driveBase.drive(throttle, strafe, rotation);
+    }
+
+    @Override
+    public void end(boolean interrupted) 
+    {
+        Util.consoleLog("interrupted=%b", interrupted);
+
+        driveBase.drive(0.0, 0.0, 0.0);
+    }
+ 
+    private static double deadband(double value, double deadband) 
+    {
+        return Math.abs(value) > deadband ? value : 0.0;
+    }
+
+    private static double squareTheInput(double value) 
+    {
+        return Math.copySign(value * value, value);
+    }
+}

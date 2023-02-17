@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import Team4450.Robot23.subsystems.DriveBase;
+import Team4450.Robot23.subsystems.LimeLight;
 import Team4450.Robot23.Constants;
 
 
@@ -53,6 +54,8 @@ public class AutoAimVision extends CommandBase {
 
     private SynchronousPID          pid = new SynchronousPID(kP, kI, kD);
 
+    private LimeLight               limeLight = new LimeLight();
+
 
     public AutoAimVision(PhotonCamera phCamera,
                             DriveBase sDriveBase,
@@ -66,6 +69,7 @@ public class AutoAimVision extends CommandBase {
         this.phPoseEstimator = phPoseEstimator;
         this.tagLayout = tagLayout;
         this.limeLightToCenter = limeLightToCenter;
+        this.cubeInClaw = false;
 
     }
 
@@ -96,60 +100,71 @@ public class AutoAimVision extends CommandBase {
 
     public void execute(){
         
-        var result = phCamera.getLatestResult();
-        
-        if(result.hasTargets()){
-
-            hadTargets = true;
-
-            elapsedTime = Util.getElaspedTime(tempTime);
-
-            //obtains the Robots pose according to the PhotonVision
-            latestAprilPose2d = phPoseEstimator.update().get().estimatedPose.toPose2d();
-            latestAprilTimestamp = phPoseEstimator.update().get().timestampSeconds;
-        
-            //Finds the target's pose, translation2d is temporary
-            targetPose2d = tagLayout.getTags().get(result.getBestTarget().getFiducialId()).pose.toPose2d().transformBy(new Transform2d(new Translation2d(0.0, 3.0), new Rotation2d(0.0)));
-
-            //merges PhotonVision pose and Odometry pose to calculate to the lateset robot pose
-            sDriveBase.getOdometry().addVisionMeasurement(latestAprilPose2d, latestAprilTimestamp);
-            latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
-
-            //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
-            targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
-                + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
+        if(cubeInClaw){
+            var result = phCamera.getLatestResult();
             
-            //get the direction the robot needs to go in
-            instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()));
-            instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
-        
-            //drive in the drection, rotation is temp
-            sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
-                            0.0);
-        }
-        else if(hadTargets){
-            
-            latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
+            if(result.hasTargets()){
 
-            //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
-            targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
-                + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
-            
-            if(targetToRobotDist > greatestDistValue)
-                greatestDistValue = targetToRobotDist;
+                hadTargets = true;
 
-            //get the direction the robot needs to go in
-            instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()))/greatestDistValue;
-            instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()))/greatestDistValue;
-        
-            //drive in the drection
-             
-            sDriveBase.drive(instThrottle, instStrafe, 0.0);
+                elapsedTime = Util.getElaspedTime(tempTime);
+
+                //obtains the Robots pose according to the PhotonVision
+                latestAprilPose2d = phPoseEstimator.update().get().estimatedPose.toPose2d();
+                latestAprilTimestamp = phPoseEstimator.update().get().timestampSeconds;
+            
+                //Finds the target's pose, translation2d is temporary
+                targetPose2d = tagLayout.getTags().get(result.getBestTarget().getFiducialId()).pose.toPose2d().transformBy(new Transform2d(new Translation2d(0.0, 3.0), new Rotation2d(0.0)));
+
+                //merges PhotonVision pose and Odometry pose to calculate to the lateset robot pose
+                sDriveBase.getOdometry().addVisionMeasurement(latestAprilPose2d, latestAprilTimestamp);
+                latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
+
+                //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
+                targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
+                    + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
+                
+                //get the direction the robot needs to go in
+                instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()));
+                instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
+            
+                //drive in the drection, rotation is temp
+                sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
+                                0.0);
+            }
+            else if(hadTargets){
+                
+                latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
+
+                //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
+                targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
+                    + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
+                
+                if(targetToRobotDist > greatestDistValue)
+                    greatestDistValue = targetToRobotDist;
+
+                //get the direction the robot needs to go in
+                instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()))/greatestDistValue;
+                instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()))/greatestDistValue;
+            
+                //drive in the drection
+                
+                sDriveBase.drive(instThrottle, instStrafe, 0.0);
+            }
+            else {
+                isFinished();
+            }
         }
         else {
-            isFinished();
+            if(limeLight.targetVisible()){
+
+                hadTargets = true;
+
+                var result = phCamera.getLatestResult();
+
+                result.getBestTarget().getFiducialId()
+            }
         }
-    
     }
 
     public boolean isFinished(){

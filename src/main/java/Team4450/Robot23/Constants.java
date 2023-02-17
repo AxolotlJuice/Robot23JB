@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import Team4450.Lib.Util;
+import Team4450.Robot23.subsystems.Pole;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -161,4 +162,14 @@ public final class Constants
 
   //-------------------- No student code above this line ------------------------------------------------------
 
+  private final Pole[] poleLayout = new ArrayList(
+    new Pole(1, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(2, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(3, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(4, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(4, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(4, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(5, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
+    new Pole(6, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0)))
 }
+

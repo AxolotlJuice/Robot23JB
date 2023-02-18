@@ -1,7 +1,9 @@
 
 package Team4450.Robot23;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import Team4450.Lib.Util;
@@ -162,14 +164,18 @@ public final class Constants
 
   //-------------------- No student code above this line ------------------------------------------------------
 
-  private final Pole[] poleLayout = new ArrayList(
+  public static final List<Pole> poleLayout = Arrays.asList(
     new Pole(1, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
     new Pole(2, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
     new Pole(3, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
     new Pole(4, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
-    new Pole(4, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
-    new Pole(4, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
-    new Pole(5, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
-    new Pole(6, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0)))
+    new Pole(5, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(6, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),
+    new Pole(7, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
+    new Pole(8, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
+    new Pole(9, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
+    new Pole(10, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
+    new Pole(11, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))),
+    new Pole(12, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))));
 }
 

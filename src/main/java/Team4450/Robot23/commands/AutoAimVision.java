@@ -43,9 +43,10 @@ public class AutoAimVision extends CommandBase {
    
     private double              latestAprilTimestamp;
     private double              targetToRobotDist;
-
-    private Pose2d              latestAprilPose2d;
+    
     private Pose3d              latestTargetPose;
+    private Pose3d              targetPolePose;
+    private Pose2d              latestAprilPose2d;
     private Pose2d              latestRobotPose;
     private Pose2d              targetPose2d;
     
@@ -152,17 +153,22 @@ public class AutoAimVision extends CommandBase {
                 sDriveBase.drive(instThrottle, instStrafe, 0.0);
             }
             else {
-                isFinished();
+                end();
             }
         }
         else {
+
+            hadTargets = true;
+
+            var result = phCamera.getLatestResult();
+
             if(limeLight.targetVisible()){
+                //targetPolePose = Constants.poleLayout.get(2 * result.getBestTarget().getFiducialId() - (if(result.getBestTarget().getYaw() > 0) ? 1 : 0)).getPose();
 
-                hadTargets = true;
-
-                var result = phCamera.getLatestResult();
-
-                result.getBestTarget().getFiducialId()
+                //line up the pixels, x = strafe & y = throttle
+            }
+            else {
+                end();
             }
         }
     }

@@ -2,6 +2,8 @@ package Team4450.Robot23.commands;
 
 
 import Team4450.Lib.*;
+
+import org.opencv.core.Rect2d;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator;
@@ -12,37 +14,33 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import Team4450.Robot23.subsystems.DriveBase;
 import Team4450.Robot23.subsystems.LimeLight;
 import Team4450.Robot23.Constants;
+import org.opencv.core.Rect;
+
+import edu.wpi.first.wpilibj.Timer;
 
 
 public class AutoAimVision extends CommandBase {
 
-
-    private static double       kP = .02, kI = .02, kD = 0;
+    //kEndGoalY is temporary
+    private static double       kP = .02, kI = .02, kD = 0, kEndGoalY = 0.0, kP2 = .02, kI2 = .02, kD2 = 0;
     private double              kToleranceDeg = .5;
-    
+   
+    private double              instThrottle, instStrafe, greatestDistValue, startTime, tempTime, elapsedTime;
+    private double              latestAprilTimestamp, targetToRobotDist, throttleTime, strafeTime;
+
     private boolean             targetLocked, hadTargets;
     private boolean             cubeInClaw;
-   
-    private double              instThrottle;
-    private double              instStrafe;
-    private double              greatestDistValue;
-    private double              startTime;
-    private double              tempTime;
-    private double              elapsedTime;
-
 
     private DriveBase           sDriveBase;
     private PhotonCamera        phCamera;
     private PhotonPoseEstimator phPoseEstimator;
-   
-    private double              latestAprilTimestamp;
-    private double              targetToRobotDist;
     
     private Pose3d              latestTargetPose;
     private Pose3d              targetPolePose;
@@ -53,9 +51,12 @@ public class AutoAimVision extends CommandBase {
     private AprilTagFieldLayout tagLayout;
     private Translation2d       limeLightToCenter;
 
-    private SynchronousPID          pid = new SynchronousPID(kP, kI, kD);
+    private SynchronousPID      pid = new SynchronousPID(kP, kI, kD);
+    private SynchronousPID      pid2 = new SynchronousPID(kP2, kI2, kD2);
 
-    private LimeLight               limeLight = new LimeLight();
+    private LimeLight           limeLight = new LimeLight();
+
+    private Rect                targetTape;    
 
 
     public AutoAimVision(PhotonCamera phCamera,
@@ -126,8 +127,8 @@ public class AutoAimVision extends CommandBase {
                     + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
                 
                 //get the direction the robot needs to go in
-                instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()));
-                instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
+                //instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()));
+                //instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
             
                 //drive in the drection, rotation is temp
                 sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
@@ -141,16 +142,20 @@ public class AutoAimVision extends CommandBase {
                 targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
                     + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
                 
-                if(targetToRobotDist > greatestDistValue)
-                    greatestDistValue = targetToRobotDist;
+                //if(targetToRobotDist > greatestDistValue)
+                //    greatestDistValue = targetToRobotDist;
 
                 //get the direction the robot needs to go in
-                instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()))/greatestDistValue;
-                instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()))/greatestDistValue;
+                throttleTime = (targetToRobotDist * Math.sin(result.getBestTarget().getYaw())/0.5);
+                strafeTime = (targetToRobotDist * Math.cos(result.getBestTarget().getYaw())/0.5);
             
                 //drive in the drection
-                
-                sDriveBase.drive(instThrottle, instStrafe, 0.0);
+                sDriveBase.drive(0.5, 0.0, 0.0);
+                Timer.delay(throttleTime);
+
+                sDriveBase.drive(0.0, 0.5, 0.0);
+                Timer.delay(strafeTime);
+
             }
             else {
                 end();
@@ -158,14 +163,21 @@ public class AutoAimVision extends CommandBase {
         }
         else {
 
-            hadTargets = true;
-
             var result = phCamera.getLatestResult();
 
             if(limeLight.targetVisible()){
-                //targetPolePose = Constants.poleLayout.get(2 * result.getBestTarget().getFiducialId() - (if(result.getBestTarget().getYaw() > 0) ? 1 : 0)).getPose();
+                //now had targets
+                hadTargets = true;
 
-                //line up the pixels, x = strafe & y = throttle
+                //gets the retangle of the tape target
+                targetTape = limeLight.getTargetRectangle();
+
+                //creates a time for both pid2s
+                elapsedTime = Util.getElaspedTime(tempTime);
+
+                //Enters modified power values based on offset from tape target
+                sDriveBase.drive(pid.calculate(-limeLight.offsetX(), elapsedTime), 
+                                 pid.calculate(-limeLight.offsetY() - kEndGoalY, elapsedTime), 0.0);
             }
             else {
                 end();
@@ -174,7 +186,9 @@ public class AutoAimVision extends CommandBase {
     }
 
     public boolean isFinished(){
+
         return latestRobotPose == targetPose2d;
+
     }
 
 

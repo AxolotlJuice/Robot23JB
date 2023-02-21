@@ -14,16 +14,12 @@ import Team4450.Robot23.commands.SimultaneousArmPID;
 
 public class Arm extends SubsystemBase{
 
-    private double                  radius;
-    private double                  radians;
-    private double                  targetExtend;
-    private double                  targetRotate;
+    private double                  radius, radians, targetExtend, targetRotate, currentSpeed, elapsedTime;
+
+    private SynchronousPID          pid;
 
     //channel tbd
-    private CANSparkMax             armMotor1 = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
-
-    //channel tbd
-    private CANSparkMax             armMotor2 = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private CANSparkMax             armMotor = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     private Command			        command = null;
     private SequentialCommandGroup  commands = null;
@@ -34,7 +30,7 @@ public class Arm extends SubsystemBase{
 
     public void initialize(){
         
-        armMotor1.getEncoder().getPosition();
+        armMotor.getEncoder().getPosition();
 
         Util.consoleLog();
     }
@@ -43,6 +39,30 @@ public class Arm extends SubsystemBase{
         
     }
 
+    
+    public void setArmCounts(int counts, double startSpeed){
+        
+        pid.setSetpoint(counts);
+
+        while(armMotor.getEncoder().getVelocity() != 0.0){
+        
+        elapsedTime = Util.getElaspedTime();
+
+        currentSpeed = pid.calculate(armMotor.getEncoder().getPosition(), elapsedTime);
+
+        armMotor.set(currentSpeed);
+        }
+    }
+    
+    public void setArmSpeed(double speed){
+        armMotor.set(speed);
+    }
+
+    public CANSparkMax getMotor(){
+        return armMotor;
+    }
+
+    /* 
     public void setArmPose(double power, Pose2d targetPose){
         
         //Uses math to determine the robot's radius and radians 
@@ -75,5 +95,6 @@ public class Arm extends SubsystemBase{
 
         commands.schedule();
     }
+    */
 
 }

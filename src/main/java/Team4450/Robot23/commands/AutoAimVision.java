@@ -195,6 +195,7 @@ public class AutoAimVision extends CommandBase {
     public void end(){
         //score with arm
         
+        
         //resets hadTargets
         hadTargets = false;
     }

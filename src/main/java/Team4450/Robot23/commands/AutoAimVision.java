@@ -42,11 +42,8 @@ public class AutoAimVision extends CommandBase {
     private PhotonCamera        phCamera;
     private PhotonPoseEstimator phPoseEstimator;
     
-    private Pose3d              latestTargetPose;
-    private Pose3d              targetPolePose;
-    private Pose2d              latestAprilPose2d;
-    private Pose2d              latestRobotPose;
-    private Pose2d              targetPose2d;
+    private Pose3d              latestTargetPose, targetPolePose;
+    private Pose2d              latestAprilPose2d, latestRobotPose,targetPose2d;
     
     private AprilTagFieldLayout tagLayout;
     private Translation2d       limeLightToCenter;
@@ -63,6 +60,7 @@ public class AutoAimVision extends CommandBase {
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
+                            Pose3d armTargetPose,
                             Translation2d limeLightToCenter)
     {
        
@@ -79,6 +77,7 @@ public class AutoAimVision extends CommandBase {
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
+                            Pose3d armTargetPose,
                             Translation2d limeLightToCenter, 
                             boolean cubeInClaw)
     {
@@ -87,6 +86,7 @@ public class AutoAimVision extends CommandBase {
         this.sDriveBase = sDriveBase;
         this.phPoseEstimator = phPoseEstimator;
         this.tagLayout = tagLayout;
+        this.armTargetPose;
         this.limeLightToCenter = limeLightToCenter;
         this.cubeInClaw = cubeInClaw;
 

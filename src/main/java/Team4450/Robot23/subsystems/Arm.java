@@ -24,6 +24,7 @@ public class Arm extends SubsystemBase{
     private Command			        command = null;
     private SequentialCommandGroup  commands = null;
 
+
     public Arm(){
         Util.consoleLog("Arm created!");
     }
@@ -61,6 +62,8 @@ public class Arm extends SubsystemBase{
     public CANSparkMax getMotor(){
         return armMotor;
     }
+
+    public void setToPreset()
 
     /* 
     public void setArmPose(double power, Pose2d targetPose){

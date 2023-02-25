@@ -3,8 +3,9 @@ package Team4450.Robot23.commands;
 import Team4450.Robot23.subsystems.Arm;
 import Team4450.Robot23.subsystems.Winch;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class ArmWinchSetPose {
+public class ArmWinchSetPose extends CommandBase{
 
     private double          radians, radius, targetExtend, targetRotate;
     
@@ -19,7 +20,7 @@ public class ArmWinchSetPose {
     }
 
     public void initalize(){
-
+        
         //claculates the desired radius and rotation(radians)
         radius = targetPose.getX()/Math.acos(targetPose.getX());
         radians = Math.asin(targetPose.getY()/radius);
@@ -28,6 +29,8 @@ public class ArmWinchSetPose {
         targetRotate = winch.getMotor().getEncoder().getCountsPerRevolution() * (radians/(2 * Math.PI));
 
         targetExtend = arm.getMotor().getEncoder().getPositionConversionFactor() * radius;
+        
+        
     }
 
     public void excute(){
@@ -41,5 +44,6 @@ public class ArmWinchSetPose {
     public void end(){
         
     }
+
     
 }

@@ -17,10 +17,18 @@ import edu.wpi.first.math.geometry.Transform2d;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import Team4450.Robot23.subsystems.Arm;
+import Team4450.Robot23.subsystems.Claw;
 import Team4450.Robot23.subsystems.DriveBase;
 import Team4450.Robot23.subsystems.LimeLight;
+import Team4450.Robot23.subsystems.Winch;
+import Team4450.Robot23.subsystems.Claw.ClawPosition;
 import Team4450.Robot23.Constants;
+import Team4450.Robot23.commands.ArmWinchPresets.Preset;
+
 import org.opencv.core.Rect;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -38,11 +46,14 @@ public class AutoAimVision extends CommandBase {
     private boolean             targetLocked, hadTargets;
     private boolean             cubeInClaw;
 
+    private Arm                 arm;
+    private Winch               winch;
+    private Claw                claw;
     private DriveBase           sDriveBase;
     private PhotonCamera        phCamera;
     private PhotonPoseEstimator phPoseEstimator;
     
-    private Pose3d              latestTargetPose, targetPolePose, armTargetPose;
+    private Pose3d              latestTargetPose, targetPolePose;
     private Pose2d              latestAprilPose2d, latestRobotPose,targetPose2d;
     
     private AprilTagFieldLayout tagLayout;
@@ -54,13 +65,17 @@ public class AutoAimVision extends CommandBase {
     private LimeLight           limeLight = new LimeLight();
 
     private Rect                targetTape;    
+    private Preset              armTargetPose;
+
+    private SequentialCommandGroup	commands = null;
+	private Command					command = null;
 
 
     public AutoAimVision(PhotonCamera phCamera,
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
-                            Pose3d armTargetPose,
+                            Preset armTargetPose,
                             Translation2d limeLightToCenter)
     {
        
@@ -77,7 +92,7 @@ public class AutoAimVision extends CommandBase {
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
-                            Pose3d armTargetPose,
+                            Preset armTargetPose,
                             Translation2d limeLightToCenter, 
                             boolean cubeInClaw)
     {
@@ -105,7 +120,7 @@ public class AutoAimVision extends CommandBase {
         if(cubeInClaw){
             var result = phCamera.getLatestResult();
             
-            if(result.hasTargets()){
+            if(result.hasTargets() && claw.getClawState() == ClawPosition.CLOSEDCUBE){
 
                 hadTargets = true;
 
@@ -134,6 +149,7 @@ public class AutoAimVision extends CommandBase {
                 sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
                                 0.0);
             }
+
             else if(hadTargets){
                 
                 latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
@@ -160,8 +176,9 @@ public class AutoAimVision extends CommandBase {
             else {
                 end();
             }
+
         }
-        else {
+        else if(claw.getClawState() == ClawPosition.CLOSEDCONE) {
 
             var result = phCamera.getLatestResult();
 
@@ -183,6 +200,9 @@ public class AutoAimVision extends CommandBase {
                 end();
             }
         }
+        else {
+            end();
+        }
     }
 
     public boolean isFinished(){
@@ -191,14 +211,18 @@ public class AutoAimVision extends CommandBase {
 
     }
 
-
     public void end(){
         //score with arm
-        
-        
+        commands = new SequentialCommandGroup();
+
+        command = new ArmWinchPresets(arm, winch, armTargetPose);
+        commands.addCommands(command);
+
+        commands.schedule();
+
+        claw.setClawState(ClawPosition.OPEN);
+
         //resets hadTargets
         hadTargets = false;
-
-        
     }
 }

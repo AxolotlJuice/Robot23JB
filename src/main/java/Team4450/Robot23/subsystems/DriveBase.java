@@ -36,7 +36,7 @@ import static Team4450.Robot23.Constants.*;
 
 public class DriveBase extends SubsystemBase 
 {
-  private boolean       autoReturnToZero = false, fieldOriented = true;
+  private boolean       autoReturnToZero = false, fieldOriented = true, currentBrakeMode = true;
   private double        distanceTraveled;
   private double        yawAngle, lastYawAngle;
   private Pose2d        lastPose;
@@ -617,6 +617,7 @@ public class DriveBase extends SubsystemBase
   {
       SmartDashboard.putBoolean("Field Oriented", fieldOriented);
       SmartDashboard.putBoolean("Auto Return To Zero", autoReturnToZero);
+      SmartDashboard.putBoolean("Brakes", currentBrakeMode);
   }
 
   /**
@@ -771,11 +772,23 @@ public class DriveBase extends SubsystemBase
    */
   public void setBrakeMode(boolean on) 
   {
-      Util.consoleLog();
+      Util.consoleLog("%b", on);
+
+      currentBrakeMode = on;
     
-      // m_frontLeftModule.setBrakeMode(on); 
-      // m_frontRightModule.setBrakeMode(on); 
-      // m_backLeftModule.setBrakeMode(on); 
-      // m_backRightModule.setBrakeMode(on); 
+      m_frontLeftModule.setBrakeMode(on); 
+      m_frontRightModule.setBrakeMode(on); 
+      m_backLeftModule.setBrakeMode(on); 
+      m_backRightModule.setBrakeMode(on); 
+
+      updateDS();
+  }
+
+  /**
+   * Toggles state of brake mode (brake/coast) for drive motors.
+   */
+  public void toggleBrakeMode()
+  {
+    setBrakeMode(!currentBrakeMode);
   }
 }

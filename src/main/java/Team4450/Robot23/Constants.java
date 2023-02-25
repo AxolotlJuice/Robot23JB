@@ -1,7 +1,6 @@
 
 package Team4450.Robot23;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -27,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "ORF23-02.15.23-1";
+	public static String		PROGRAM_NAME = "JB23-02.25.23";
 
 	public static Robot			robot;
 
@@ -42,8 +41,8 @@ public final class Constants
 	// Non-drive base motor controller port assignments
 
     public static final int     CLAW_MOTOR = 15;
-    public static final int     WINCH_MOTOR = 13;
-    public static final int     ARM_MOTOR = 14;
+    public static final int     WINCH_MOTOR = 14;
+    public static final int     ARM_MOTOR = 13;
     public static final int     REV_PDB = 20;
 	
 	// GamePad port assignments.
@@ -72,7 +71,7 @@ public final class Constants
 	public static final int		LCD_10 = 10;	// ShuffleBoard subsystem.
 
 	// Default starting field position in meters for pose tracking.
-	public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(2.610, 2.847, new Rotation2d(0));
+	public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(2.610, 2.847, Rotation2d.fromDegrees(0));
     
 	// Next group of constants are for Swerve drive.
 
@@ -106,25 +105,25 @@ public final class Constants
 
     // Swerve Module motor controller & encoder port assignments and steering offsets.
 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1; // Set front left module drive motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2; //  Set front left module steer motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 3; //  Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(301.113); //  Measure and set front left steer offset
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 10; //  Set left front drive motor ID
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11; //  Set left front steer motor ID
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12; //  Set left front steer encoder ID
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(336.621); //  Measure and set left front steer offset
 
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4; //  Set front right drive motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 5; //  Set front right steer motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 6; //  Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(238.096); //  Measure and set front right steer offset
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 7; //  Set front right drive motor ID
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 8; //  Set front right steer motor ID
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 9; //  Set front right steer encoder ID
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(235.107); //  Measure and set front right steer offset
 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 7; //  Set back left drive motor ID
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 8; //  Set back left steer motor ID
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 9; //  Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(55.283); //  Measure and set back left steer offset
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 4; //  Set back left drive motor ID
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 5; //  Set back left steer motor ID
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 6; //  Set back left steer encoder ID
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(58.535); //  Measure and set back left steer offset
 
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 10; //  Set back right drive motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11; //  Set back right steer motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 12; //  Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(157.764); //  Measure and set back right steer offset
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 1; // Set back right module drive motor ID
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 2; //  Set back right module steer motor ID
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3; //  Set back right steer encoder ID
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(121.201); //  Measure and set back right steer offset
     
 	// Use these values in PathWeaver for speed and acceleration.
     // Robot will go faster than this, more like 3 mps but this value tones down autonomous speed.
@@ -151,7 +150,7 @@ public final class Constants
     // public static final double  DB_VELOCITY_KP = .12;  
     // public static final double  DB_VELOCITY_KD = 0.0;
 
-    private final AprilTagFieldLayout aprlFieldLayout = new AprilTagFieldLayout(Arrays.asList(
+    private final AprilTagFieldLayout aprilFieldLayout = new AprilTagFieldLayout(Arrays.asList(
     new AprilTag(1, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(2, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(3, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
@@ -161,6 +160,7 @@ public final class Constants
     new AprilTag(7, new Pose3d(Units.inchesToMeters( 40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, 0.0))),
     new AprilTag(8, new Pose3d(Units.inchesToMeters( 40.45), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, 0.0)))
   ), Units.inchesToMeters(651.25), Units.inchesToMeters(315.5));
+
 
   //-------------------- No student code above this line ------------------------------------------------------
 

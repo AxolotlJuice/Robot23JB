@@ -1,11 +1,11 @@
 {
   "MainWindow": {
     "GLOBAL": {
-      "height": "1050",
+      "height": "749",
       "maximized": "0",
       "style": "2",
       "userScale": "2",
-      "width": "1920",
+      "width": "1370",
       "xpos": "-1",
       "ypos": "-1"
     }
@@ -21,7 +21,7 @@
     "###/SmartDashboard/Auto Program": {
       "Collapsed": "0",
       "Pos": "135,27",
-      "Size": "361,66"
+      "Size": "254,54"
     },
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
@@ -30,8 +30,8 @@
     },
     "###/SmartDashboard/Field2d": {
       "Collapsed": "0",
-      "Pos": "402,20",
-      "Size": "1054,566"
+      "Pos": "270,134",
+      "Size": "937,422"
     },
     "###/SmartDashboard/Gyro2": {
       "Collapsed": "0",
@@ -40,38 +40,38 @@
     },
     "###/SmartDashboard/Start Position": {
       "Collapsed": "0",
-      "Pos": "135,117",
-      "Size": "361,66"
+      "Pos": "418,38",
+      "Size": "254,54"
     },
     "###FMS": {
       "Collapsed": "0",
       "Pos": "0,688",
-      "Size": "388,182"
+      "Size": "283,146"
     },
     "###Joysticks": {
       "Collapsed": "0",
       "Pos": "299,691",
-      "Size": "1156,316"
+      "Size": "796,73"
     },
     "###NetworkTables": {
-      "Collapsed": "0",
-      "Pos": "314,58",
+      "Collapsed": "1",
+      "Pos": "215,606",
       "Size": "1361,860"
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "1522,28",
+      "Pos": "1351,28",
       "Size": "375,1042"
     },
     "###System Joysticks": {
       "Collapsed": "0",
       "Pos": "7,525",
-      "Size": "273,290"
+      "Size": "192,218"
     },
     "###Timing": {
       "Collapsed": "0",
       "Pos": "7,224",
-      "Size": "197,360"
+      "Size": "141,288"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -81,7 +81,7 @@
     "Robot State": {
       "Collapsed": "0",
       "Pos": "3,32",
-      "Size": "126,129"
+      "Size": "92,99"
     }
   }
 }

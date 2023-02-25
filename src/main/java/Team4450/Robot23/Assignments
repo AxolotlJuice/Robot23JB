@@ -3,26 +3,26 @@ Port and Button Assignments.
 CTRE CAN Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-3       CanCoder        LF CanCoder.
-6       CanCoder        RF CanCoder.
-9       CanCoder        LR CanCoder.
-12      CanCoder        RR CanCoder.
+3       CanCoder        RR CanCoder.
+6       CanCoder        LR CanCoder.
+9       CanCoder        RF CanCoder.
+12      CanCoder        LF CanCoder.
 15      TalonFX         Claw motor.
 
 
 SparkMax CAN Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-1       SparkMax        LF drive motor.
-2       SparkMax        LF steer motor.
-4       SparkMax        RF drive motor.
-5       SparkMax        RF steer motor.
-7       SparkMax        LR drive motor.
-8       SparkMax        LR steer motor.
-10      SparkMax        RR drive motor.
-11      SparkMax        RR steer motor.
-13      SparkMax        Winch motor.
-14      SparkMax        ARM motor.
+1       SparkMax        RR drive motor.
+2       SparkMax        RR steer motor.
+4       SparkMax        LR drive motor.
+5       SparkMax        LR steer motor.
+7       SparkMax        RF drive motor.
+8       SparkMax        RF steer motor.
+10      SparkMax        LF drive motor.
+11      SparkMax        LF steer motor.
+13      SparkMax        Arm motor.
+14      SparkMax        Winch motor.
 
 PWM Ports
 Port	Device			Description
@@ -76,10 +76,12 @@ Button Name				Function
 -----------------------------------------------------------------------------------
 BACK                    Toggle field/robot orientation driving.
 START                   Align wheels to start position.
+LEFT_BUMPER             Slow Mode.
 RIGHT_BUMPER       		Switch Cameras.
 POV_90                  Switch DS tab.
 A                       Reset simulated yaw.
-B                       Reset simulated distance traveled.
+B                       Toggle drive wheel brake mode.
+X                       Reset simulated distance traveled.
 
 
 Utility GamePad - Left Joystick
@@ -110,9 +112,11 @@ Disabled				boolean			True when robot is disabled.
 Auto Mode				boolean			True when robot is in autonomous mode.
 Teleop Mode				boolean			True when robot is in teleop mode.
 FMS						boolean			True when robot is connected to the FMS.
+Brakes					boolean			True when drive motors are in brake mode.
 Low Battery				boolean			True when battery is low.
 Overload				boolean			True when brownout has occurred.
 Auto Program            Chooser         List of autonomous programs.
+Field Oriented          boolean         True when swerve drive is in field orientation mode.
 
 
 Drive Base gearbox ratios: SDS Level 1 for approx 9.28 f/s or 3 m/s.

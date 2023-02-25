@@ -59,5 +59,9 @@ public class Claw {
             
         }
     }
+
+    public ClawPosition getClawState(){
+        return clawState;
+    }
 }
 

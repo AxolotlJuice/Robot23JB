@@ -19,7 +19,7 @@ public class Arm extends SubsystemBase{
     private SynchronousPID          pid;
 
     //channel tbd
-    private CANSparkMax             armMotor = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private CANSparkMax             armMotor = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     private Command			        command = null;
     private SequentialCommandGroup  commands = null;
@@ -63,7 +63,9 @@ public class Arm extends SubsystemBase{
         return armMotor;
     }
 
-    public void setToPreset()
+    public void setToPreset(){
+        
+    }
 
     /* 
     public void setArmPose(double power, Pose2d targetPose){

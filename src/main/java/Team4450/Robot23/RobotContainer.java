@@ -308,10 +308,16 @@ public class RobotContainer
 		new Trigger(() -> driverPad.getRightBumper())
     		.onTrue(new InstantCommand(cameraFeed::ChangeCamera));
 
+		// Reset yaw angle to zero.
 		new Trigger(() -> driverPad.getAButton())
     		.onTrue(new InstantCommand(driveBase::resetYaw));
 
+		// Toggle drive motors between brake and coast.
 		new Trigger(() -> driverPad.getBButton())
+    		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
+
+		// Reset drive wheel distance traveled.
+		new Trigger(() -> driverPad.getXButton())
     		.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
 	 
 		// -------- Utility pad buttons ----------

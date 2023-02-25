@@ -62,6 +62,15 @@ public class DriveCommand extends CommandBase
             driveBase.getGyroYaw()
         );
 
+        // This is the default command for the DriveBase. When running in autonmous, the auto commands
+        // require DriveBase, which preempts the default DriveBase command. However, if our auto code ends 
+        // before end of auto period, then this drive command resumes and is feeding drivebase during remainder
+        // of auto period. This was not an issue until the joystick drift problems arose, so the resumption of a 
+        // driving command during auto had the robot driving randomly after our auto program completed. The if 
+        // statment below prevents this.
+        
+        if (robot.isAutonomous()) return;
+
         double throttle = deadband(throttleSupplier.getAsDouble(), THROTTLE_DEADBAND);
         double strafe = deadband(strafeSupplier.getAsDouble(), THROTTLE_DEADBAND);
         double rotation = deadband(rotationSupplier.getAsDouble(), ROTATION_DEADBAND);
@@ -82,6 +91,15 @@ public class DriveCommand extends CommandBase
         strafe = slewY.calculate(strafe);
         rotation = slewRot.calculate(rotation);
 
+        // "Slow" mode. Caps speed while bumper held down.
+
+        if (controller.getLeftBumper())
+        {
+            throttle = Util.clampValue(throttle, .30);
+            strafe = Util.clampValue(strafe, .30);
+            rotation = Util.clampValue(rotation, .30);
+        }
+        
         driveBase.drive(throttle, strafe, rotation);
     }
 

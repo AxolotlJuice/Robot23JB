@@ -12,13 +12,10 @@ public class ArmWinchPresets extends CommandBase{
 
     private Arm             arm;
     private Winch           winch;
-    private Pose2d          targetPose;
     private Preset          preset;
 
     private SequentialCommandGroup	commands = null;
 	private Command					command = null;
-
-    private ArmWinchSetPose         poseSetter;
 
     public enum Preset{
         GRABBING,
@@ -28,7 +25,7 @@ public class ArmWinchPresets extends CommandBase{
         TAGLOW
     }
     
-    public ArmWinchPresets(Arm arm, Winch winch, Pose2d targetPose, Preset preset){
+    public ArmWinchPresets(Arm arm, Winch winch, Preset preset){
         this.arm = arm;
         this.winch = winch;
         this.preset = preset;
@@ -37,6 +34,7 @@ public class ArmWinchPresets extends CommandBase{
     public void initailize(){
         
         switch(preset){
+
             case GRABBING:
                 winch.getMotor().getEncoder().setPosition(0.0);
                 arm.getMotor().getEncoder().setPosition(0.0);
@@ -55,13 +53,13 @@ public class ArmWinchPresets extends CommandBase{
 
             case TAGHIGH:
                 commands = new SequentialCommandGroup();
-                command = new ArmWinchSetPose(arm, winch, new Pose2d(22.7125, 81.0717, null));
+                command = new ArmWinchSetPose(arm, winch, new Pose2d(38.2877, 39.2805, null));
                 commands.addCommands(command);
                 commands.schedule();
 
             case TAGLOW:
                 commands = new SequentialCommandGroup();
-                command = new ArmWinchSetPose(arm, winch, new Pose2d(22.7125, 81.0717, null));
+                command = new ArmWinchSetPose(arm, winch, new Pose2d(22.2826, 24.2800, null));
                 commands.addCommands(command);
                 commands.schedule(); 
             
@@ -69,7 +67,7 @@ public class ArmWinchPresets extends CommandBase{
     }
 
     public void execute(){
-
+        //nothing to execute
     }
 
     public boolean isFinished(){
@@ -77,6 +75,6 @@ public class ArmWinchPresets extends CommandBase{
     }
 
     public void end(){
-
+        //nothing to end with
     }
 }

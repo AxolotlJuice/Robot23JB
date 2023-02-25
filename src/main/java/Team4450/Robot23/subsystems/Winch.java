@@ -12,7 +12,7 @@ public class Winch {
 
     private SynchronousPID          pid = new SynchronousPID(0, 0, 0);
 
-    private CANSparkMax             winchMotor = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private CANSparkMax             winchMotor = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
     
     public Winch(){
         Util.consoleLog("Winch Created!");

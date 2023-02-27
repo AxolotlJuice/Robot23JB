@@ -34,7 +34,7 @@ import org.opencv.core.Rect;
 import edu.wpi.first.wpilibj.Timer;
 
 
-public class AutoAimVision extends CommandBase {
+public class AutoScoreVis extends CommandBase {
 
     //kEndGoalY is temporary
     private static double       kP = .02, kI = .02, kD = 0, kEndGoalY = 0.0, kP2 = .02, kI2 = .02, kD2 = 0;
@@ -71,7 +71,7 @@ public class AutoAimVision extends CommandBase {
 	private Command					command = null;
 
 
-    public AutoAimVision(PhotonCamera phCamera,
+    public AutoScoreVis(PhotonCamera phCamera,
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
@@ -88,7 +88,7 @@ public class AutoAimVision extends CommandBase {
 
     }
 
-    public AutoAimVision(PhotonCamera phCamera,
+    public AutoScoreVis(PhotonCamera phCamera,
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,

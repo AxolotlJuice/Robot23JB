@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ArmWinchSetPose extends CommandBase{
 
-    private double          radians, radius, targetExtend, targetRotate;
+    private double          radians, radius;
+    private int             targetExtend, targetRotate;
     
     private Pose2d          targetPose;
     private Arm             arm;
@@ -26,11 +27,13 @@ public class ArmWinchSetPose extends CommandBase{
         radians = Math.asin(targetPose.getY()/radius);
 
         //Finds the encoder counts equivalent to the radius and radians
-        targetRotate = winch.getMotor().getEncoder().getCountsPerRevolution() * (radians/(2 * Math.PI));
+        targetRotate = (int) (winch.getMotor().getEncoder().getCountsPerRevolution() * (radians/(2 * Math.PI)));
 
-        targetExtend = arm.getMotor().getEncoder().getPositionConversionFactor() * radius;
+        targetExtend = (int) (arm.getMotor().getEncoder().getPositionConversionFactor() * radius);
         
-        
+        winch.setWinchCounts(targetRotate, 0.5);
+
+        arm.setArmCounts(targetExtend, 0.5);
     }
 
     public void excute(){

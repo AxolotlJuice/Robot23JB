@@ -29,7 +29,7 @@ public class Winch {
         
     }
 
-    public void moveWinchCounts(int counts, double speed){
+    public void setWinchCounts(int counts, double startSpeed){
         
         pid.setSetpoint(counts);
 

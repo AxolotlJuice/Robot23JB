@@ -1,5 +1,6 @@
 package Team4450.Robot23.commands;
 
+import Team4450.Lib.SynchronousPID;
 import Team4450.Robot23.subsystems.Arm;
 import Team4450.Robot23.subsystems.Winch;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,6 +17,9 @@ public class ArmWinchPresets extends CommandBase{
 
     private SequentialCommandGroup	commands = null;
 	private Command					command = null;
+
+    private SynchronousPID          pid1 = new SynchronousPID(0, 0, 0);
+    private SynchronousPID          pid2 = new SynchronousPID(0, 0, 0);
 
     public enum Preset{
         GRABBING,

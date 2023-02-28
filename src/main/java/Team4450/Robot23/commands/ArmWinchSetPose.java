@@ -22,7 +22,7 @@ public class ArmWinchSetPose extends CommandBase{
 
     public void initalize(){
         
-        //claculates the desired radius and rotation(radians)
+        //claculates the desired radius and rotation(radians).
         radius = targetPose.getX()/Math.acos(targetPose.getX());
         radians = Math.asin(targetPose.getY()/radius);
 
@@ -48,5 +48,4 @@ public class ArmWinchSetPose extends CommandBase{
         
     }
 
-    
 }

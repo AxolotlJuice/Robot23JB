@@ -117,91 +117,79 @@ public class AutoScoreVis extends CommandBase {
 
     public void execute(){
         
-        if(cubeInClaw){
-            var result = phCamera.getLatestResult();
+        var result = phCamera.getLatestResult();
+
+        if(claw.getClawState() == ClawPosition.CLOSEDCONE && result.hasTargets()){
+
+            hadTargets = true;
+
+            elapsedTime = Util.getElaspedTime(tempTime);
+
+            //obtains the Robots pose according to the PhotonVision
+            latestAprilPose2d = phPoseEstimator.update().get().estimatedPose.toPose2d();
+            latestAprilTimestamp = phPoseEstimator.update().get().timestampSeconds;
             
-            if(result.hasTargets() && claw.getClawState() == ClawPosition.CLOSEDCUBE){
+            //Finds the target's pose, translation2d is temporary
+            targetPose2d = tagLayout.getTags().get(result.getBestTarget().getFiducialId()).pose.toPose2d().transformBy(new Transform2d(new Translation2d(0.0, 3.0), new Rotation2d(0.0)));
 
-                hadTargets = true;
+            //merges PhotonVision pose and Odometry pose to calculate to the lateset robot pose
+            sDriveBase.getOdometry().addVisionMeasurement(latestAprilPose2d, latestAprilTimestamp);
+            latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
 
-                elapsedTime = Util.getElaspedTime(tempTime);
-
-                //obtains the Robots pose according to the PhotonVision
-                latestAprilPose2d = phPoseEstimator.update().get().estimatedPose.toPose2d();
-                latestAprilTimestamp = phPoseEstimator.update().get().timestampSeconds;
+            //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
+            targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
+                + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
             
-                //Finds the target's pose, translation2d is temporary
-                targetPose2d = tagLayout.getTags().get(result.getBestTarget().getFiducialId()).pose.toPose2d().transformBy(new Transform2d(new Translation2d(0.0, 3.0), new Rotation2d(0.0)));
-
-                //merges PhotonVision pose and Odometry pose to calculate to the lateset robot pose
-                sDriveBase.getOdometry().addVisionMeasurement(latestAprilPose2d, latestAprilTimestamp);
-                latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
-
-                //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
-                targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
-                    + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
-                
-                //get the direction the robot needs to go in
-                //instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()));
-                //instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
-            
-                //drive in the drection, rotation is temp
-                sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
-                                0.0);
-            }
-
-            else if(hadTargets){
-                
-                latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
-
-                //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
-                targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
-                    + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
-                
-                //if(targetToRobotDist > greatestDistValue)
-                //    greatestDistValue = targetToRobotDist;
-
-                //get the direction the robot needs to go in
-                throttleTime = (targetToRobotDist * Math.sin(result.getBestTarget().getYaw())/0.5);
-                strafeTime = (targetToRobotDist * Math.cos(result.getBestTarget().getYaw())/0.5);
-            
-                //drive in the drection
-                sDriveBase.drive(0.5, 0.0, 0.0);
-                Timer.delay(throttleTime);
-
-                sDriveBase.drive(0.0, 0.5, 0.0);
-                Timer.delay(strafeTime);
-
-            }
-            else {
-                end();
-            }
-
+            //get the direction the robot needs to go in
+            //instThrottle = 0.5*(targetToRobotDist * Math.sin(result.getBestTarget().getYaw()));
+            //instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
+        
+            //drive in the drection, rotation is temp
+            sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
+                            0.0);
+        
         }
-        else if(claw.getClawState() == ClawPosition.CLOSEDCONE) {
+        else if(claw.getClawState() == ClawPosition.CLOSEDCONE && limeLight.targetVisible()) {
+            
+            //now had targets
+            hadTargets = true;
 
-            var result = phCamera.getLatestResult();
+            //gets the retangle of the tape target
+            targetTape = limeLight.getTargetRectangle();
 
-            if(limeLight.targetVisible()){
-                //now had targets
-                hadTargets = true;
+            //creates a time for both pid2s
+            elapsedTime = Util.getElaspedTime(tempTime);
 
-                //gets the retangle of the tape target
-                targetTape = limeLight.getTargetRectangle();
+            //Enters modified power values based on offset from tape target
+            sDriveBase.drive(pid.calculate(-limeLight.offsetX(), elapsedTime), 
+                             pid.calculate(-limeLight.offsetY() - kEndGoalY, elapsedTime), 0.0);
+            
+            
+        }
+        else if(hadTargets){
+                
+            latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
 
-                //creates a time for both pid2s
-                elapsedTime = Util.getElaspedTime(tempTime);
+            //claculate distance between aprilTag and robot (turn pose2d ---> pose3d)
+            targetToRobotDist = Math.sqrt(Math.pow(Math.abs(targetPose2d.getX() - latestRobotPose.getX()), 2.0)
+                + Math.pow(Math.abs(targetPose2d.getY() - latestRobotPose.getY()), 2.0));
 
-                //Enters modified power values based on offset from tape target
-                sDriveBase.drive(pid.calculate(-limeLight.offsetX(), elapsedTime), 
-                                 pid.calculate(-limeLight.offsetY() - kEndGoalY, elapsedTime), 0.0);
-            }
-            else {
-                end();
-            }
+            //get the direction the robot needs to go in
+            throttleTime = (targetToRobotDist * Math.sin(result.getBestTarget().getYaw())/0.5);
+            strafeTime = (targetToRobotDist * Math.cos(result.getBestTarget().getYaw())/0.5);
+            
+            //drive in the drection
+            sDriveBase.drive(0.5, 0.0, 0.0);
+            Timer.delay(throttleTime);
+
+            sDriveBase.drive(0.0, 0.5, 0.0);
+            Timer.delay(strafeTime);
+
         }
         else {
+            //add error message
             end();
+            
         }
     }
 

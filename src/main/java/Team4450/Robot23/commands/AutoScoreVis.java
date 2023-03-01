@@ -84,26 +84,6 @@ public class AutoScoreVis extends CommandBase {
         this.phPoseEstimator = phPoseEstimator;
         this.tagLayout = tagLayout;
         this.limeLightToCenter = limeLightToCenter;
-        this.cubeInClaw = false;
-
-    }
-
-    public AutoScoreVis(PhotonCamera phCamera,
-                            DriveBase sDriveBase,
-                            AprilTagFieldLayout tagLayout,
-                            PhotonPoseEstimator phPoseEstimator,
-                            Preset armTargetPose,
-                            Translation2d limeLightToCenter, 
-                            boolean cubeInClaw)
-    {
-       
-        this.phCamera = phCamera;
-        this.sDriveBase = sDriveBase;
-        this.phPoseEstimator = phPoseEstimator;
-        this.tagLayout = tagLayout;
-        this.armTargetPose = armTargetPose;
-        this.limeLightToCenter = limeLightToCenter;
-        this.cubeInClaw = cubeInClaw;
 
     }
 
@@ -145,10 +125,11 @@ public class AutoScoreVis extends CommandBase {
             //instStrafe = 0.5*(targetToRobotDist * Math.cos(result.getBestTarget().getYaw()));
         
             //drive in the drection, rotation is temp
-            sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid.calculate(instStrafe, elapsedTime),
+            sDriveBase.drive(pid.calculate(instThrottle, elapsedTime), pid2.calculate(instStrafe, elapsedTime),
                             0.0);
         
         }
+
         else if(claw.getClawState() == ClawPosition.CLOSEDCONE && limeLight.targetVisible()) {
             
             //now had targets
@@ -162,10 +143,10 @@ public class AutoScoreVis extends CommandBase {
 
             //Enters modified power values based on offset from tape target
             sDriveBase.drive(pid.calculate(-limeLight.offsetX(), elapsedTime), 
-                             pid.calculate(-limeLight.offsetY() - kEndGoalY, elapsedTime), 0.0);
-            
+                             pid2.calculate(-limeLight.offsetY() - kEndGoalY, elapsedTime), 0.0);
             
         }
+
         else if(hadTargets){
                 
             latestRobotPose = sDriveBase.getOdometry().getEstimatedPosition();
@@ -186,8 +167,12 @@ public class AutoScoreVis extends CommandBase {
             Timer.delay(strafeTime);
 
         }
+
         else {
             //add error message
+            Util.consoleLog("No visable target & no previous targets.");
+            Util.consoleLog("PhotonHasTargets:%b, LimeHasTargets:%b, HadTargets:%b, ClawPosition:%s", 
+                            result.hasTargets(), limeLight.targetVisible(), hadTargets, claw.getClawState().name());
             end();
             
         }

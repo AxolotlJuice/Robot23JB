@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import Team4450.Lib.Util;
-import Team4450.Robot23.Constants;
+
 
 public class Claw {
     
@@ -20,7 +20,7 @@ public class Claw {
     public enum ClawPosition{
         OPEN,
         CLOSEDCONE,
-        CLOSEDCUBE
+        CLOSEDCUBE,
     }
     
     public Claw(){
@@ -64,4 +64,3 @@ public class Claw {
         return clawState;
     }
 }
-

@@ -44,7 +44,6 @@ public class AutoScoreVis extends CommandBase {
     private double              latestAprilTimestamp, targetToRobotDist, throttleTime, strafeTime;
 
     private boolean             targetLocked, hadTargets;
-    private boolean             cubeInClaw;
 
     private Arm                 arm;
     private Winch               winch;
@@ -57,7 +56,7 @@ public class AutoScoreVis extends CommandBase {
     private Pose2d              latestAprilPose2d, latestRobotPose,targetPose2d;
     
     private AprilTagFieldLayout tagLayout;
-    private Translation2d       limeLightToCenter;
+    private Translation3d       limeLightToCenter;
 
     private SynchronousPID      pid = new SynchronousPID(kP, kI, kD);
     private SynchronousPID      pid2 = new SynchronousPID(kP2, kI2, kD2);
@@ -76,7 +75,7 @@ public class AutoScoreVis extends CommandBase {
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
                             Preset armTargetPose,
-                            Translation2d limeLightToCenter)
+                            Translation3d limeLightToCenter)
     {
        
         this.phCamera = phCamera;

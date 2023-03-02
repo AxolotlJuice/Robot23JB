@@ -6,6 +6,9 @@ import static Team4450.Robot23.Constants.*;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -53,8 +56,10 @@ public class RobotContainer
 {
 	// Subsystems.
 
-	public static ShuffleBoard	shuffleBoard;
-	public static DriveBase 	driveBase;
+	public static ShuffleBoard			shuffleBoard;
+	public static DriveBase 			driveBase;
+	public static PhotonCamera			phCamera;
+	public static PhotonPoseEstimator	phPoseEstimator;
 
 	// Subsystem Default Commands.
 

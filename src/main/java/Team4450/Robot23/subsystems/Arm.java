@@ -2,15 +2,17 @@ package Team4450.Robot23.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-
 import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import Team4450.Robot23.commands.SimultaneousArmPID;
+
+import static Team4450.Robot23.Constants.*;
 
 public class Arm extends SubsystemBase{
 
@@ -20,6 +22,8 @@ public class Arm extends SubsystemBase{
 
     //channel tbd
     private CANSparkMax             armMotor = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+    private DigitalInput    limitSwitch = new DigitalInput(ARM_SWITCH);
 
     private Command			        command = null;
     private SequentialCommandGroup  commands = null;

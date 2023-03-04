@@ -2,8 +2,11 @@ package Team4450.Robot23.commands.autonomous;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+
+import Team4450.Lib.SynchronousPID;
 import Team4450.Robot23.Constants;
 import Team4450.Robot23.commands.AutoScoreVis;
+import Team4450.Robot23.commands.ArmWinchPresets.Preset;
 import Team4450.Robot23.subsystems.Arm;
 import Team4450.Robot23.subsystems.Claw;
 import Team4450.Robot23.subsystems.DriveBase;
@@ -24,8 +27,11 @@ public class Auto23BlueCone1 extends CommandBase{
     private PhotonCamera        phCamera;
     private PhotonPoseEstimator phPoseEstimator;
     
-    private Pose3d              startingPose;
+    private Pose3d              targetPose;
     private Pose2d              currentPose;
+    private Preset              targetPreset;
+
+    private SynchronousPID      pid = new SynchronousPID(0, 0, 0);
 
     private SequentialCommandGroup	commands = null;
     private Command					command = null;
@@ -34,26 +40,26 @@ public class Auto23BlueCone1 extends CommandBase{
         this.driveBase = driveBase;
         this.arm = arm;
         this.winch = winch;
-        this.startingPose = startingPose;
+        this.targetPose = targetPose;
         this.phPoseEstimator = phPoseEstimator;
+        this.targetPreset = targetPreset;
     }
 
     public void initailize(){
 
         commands = new SequentialCommandGroup(command);
 
-        command = new AutoScoreVis(phCamera, driveBase, 
+        commands.addCommands(new AutoScoreVis(phCamera, driveBase, 
                                     Constants.APRILTAGFIELDLAYOUT, 
-                                    PhotonPoseEstimator phPoseEstimator, 
-                                    claw.getClawState(), 
-                                    Constants.LIMETOCENTER);
+                                    phPoseEstimator, 
+                                    targetPreset, 
+                                    Constants.LIMETOCENTER));
 
-        commands.addCommands(command);
-
+                                    
         currentPose = driveBase.getOdometry().getEstimatedPosition();
+
+        command DriveDualPID();
         
-        
-        driveBase.drive((currentPose.getX() - 6.38) * ,(currentPose.getY() - 4.60), 180);
     }
 
     public void execute(){

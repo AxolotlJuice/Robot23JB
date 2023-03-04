@@ -45,11 +45,11 @@ public class Winch {
 
         while(winchMotor.getEncoder().getVelocity() != 0.0){
         
-        elapsedTime = Util.getElaspedTime();
+            elapsedTime = Util.getElaspedTime();
 
-        currentSpeed = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
+            currentSpeed = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
 
-        winchMotor.set(currentSpeed);
+            winchMotor.set(currentSpeed);
         }
     }
 

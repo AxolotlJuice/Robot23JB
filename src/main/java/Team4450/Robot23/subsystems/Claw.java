@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 
 import Team4450.Lib.FXEncoder;
+import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
 
 public class Claw {
@@ -14,9 +15,13 @@ public class Claw {
     private WPI_TalonFX         clawMotor = new WPI_TalonFX(15);
     private FXEncoder           encoder = new FXEncoder(clawMotor);
 
+    private SynchronousPID      pid = new SynchronousPID(0, 0, 0);
+
     private ClawPosition        clawState;
 
-    private final double        CLAW_MAX = 13000;
+    private double              power, time, lastTimeCalled;
+
+    private final double        CLAW_MAX = 13000, tolerance = 1000;
     
     /*
      * Each enum represent a predetermined position the Claw will run to
@@ -58,21 +63,40 @@ public class Claw {
 
     public void setClawState(ClawPosition desiredState){
         //temp values
+        
+        pid.setOutputRange(-.20, .20);
+        
+        double time = Util.getElaspedTime(lastTimeCalled);
+        lastTimeCalled = Util.timeStamp();
+
         switch(desiredState){
             
             case CLOSEDCONE:
-                clawMotor.set(TalonFXControlMode.Position, 2.0);
-                clawState = ClawPosition.CLOSEDCONE;
+                pid.setSetpoint(13000);
+
+                while(pid.onTarget(tolerance)){
+                    time = Util.getElaspedTime(lastTimeCalled);
+                    power = pid.calculate(encoder.getAbsolutePosition(), time);
+                    clawMotor.set(power);
+                    clawState = ClawPosition.CLOSEDCONE;
+                }
                 break;
             
             case CLOSEDCUBE:
-                clawMotor.set(TalonFXControlMode.Position, 1.0);
-                clawState = ClawPosition.CLOSEDCUBE;
+                while(pid.onTarget(tolerance)){
+                    pid.setSetpoint(3000);
+
+                    time = Util.getElaspedTime(lastTimeCalled);
+                    power = pid.calculate(encoder.getAbsolutePosition(), time);
+                    clawMotor.set(power);
+                    clawState = ClawPosition.CLOSEDCUBE;
+                }
                 break;
 
             case OPEN:
-                clawMotor.set(TalonFXControlMode.Position, 0.0);
-                clawState = ClawPosition.OPEN;
+                while(clawMotor.isRevLimitSwitchClosed() != 1){
+                    setPower(.20);
+                }
                 break;
             
         }

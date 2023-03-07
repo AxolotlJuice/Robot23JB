@@ -64,7 +64,7 @@ public class DriveDualPID extends CommandBase  {
     }
 
     public boolean isFinished(){
-        return (armMotor1.getEncoder().getVelocity() == 0.0) && (armMotor2.getEncoder().getVelocity() == 0.0);
+        return true;
     }
 
     public void end(){

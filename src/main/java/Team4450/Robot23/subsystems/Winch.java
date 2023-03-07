@@ -12,16 +12,18 @@ import static Team4450.Robot23.Constants.*;
 
 public class Winch {
 
-    private double                  currentSpeed, elapsedTime;
+    private double                  elapsedTime, power;
 
-    private SynchronousPID          pid = new SynchronousPID(0, 0, 0);
+    private final double            tolerance = .5, maxPower = .30;
+
+    private SynchronousPID          pid = new SynchronousPID(.01, 0, 0);
 
     private CANSparkMax             winchMotor = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private RelativeEncoder encoder = winchMotor.getEncoder();
-    private DigitalInput    lowerLimitSwitch = new DigitalInput(WINCH_SWITCH_LOWER);
-    private DigitalInput    upperLimitSwitch = new DigitalInput(WINCH_SWITCH_UPPER);
+    private RelativeEncoder         encoder = winchMotor.getEncoder();
+    private DigitalInput            lowerLimitSwitch = new DigitalInput(WINCH_SWITCH_LOWER);
+    private DigitalInput            upperLimitSwitch = new DigitalInput(WINCH_SWITCH_UPPER);
 
-    private final double    WINCH_MAX = 1000;
+    private final double            WINCH_MAX = 116; //revolutions
 
     
     public Winch(){
@@ -30,9 +32,9 @@ public class Winch {
 
     public void initialize(){
         
-        winchMotor.getEncoder().getPosition();
 
         Util.consoleLog();
+
     }
 
     public void periodic(){
@@ -43,15 +45,40 @@ public class Winch {
         
         pid.setSetpoint(counts);
 
-        while(winchMotor.getEncoder().getVelocity() != 0.0){
+        pid.setOutputRange(-maxPower, maxPower);
+
+        while(pid.onTarget(tolerance)){
         
             elapsedTime = Util.getElaspedTime();
 
-            currentSpeed = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
+            power = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
 
-            winchMotor.set(currentSpeed);
+            power = Util.clampValue(power, .70);
+
+            winchMotor.set(power);
         }
     }
+
+    public void AutonSetWinchCounts(int counts, double startSpeed){
+        
+        pid.setSetpoint(counts);
+
+        pid.setOutputRange(counts, startSpeed);
+
+        while(pid.onTarget(tolerance)){
+        
+            elapsedTime = Util.getElaspedTime();
+
+            power = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
+
+            power = Util.clampValue(power, .70);
+
+            winchMotor.set(power);
+        }
+
+        holdPosition();
+    }
+
 
     public void setWinchSpeed(double speed){
         winchMotor.set(speed);
@@ -59,6 +86,11 @@ public class Winch {
 
     public CANSparkMax getMotor(){
         return winchMotor;
+    }
+
+    public void holdPosition()
+    {
+        winchMotor.set(.10);
     }
 
 }

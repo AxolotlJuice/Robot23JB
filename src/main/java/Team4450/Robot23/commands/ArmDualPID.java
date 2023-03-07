@@ -32,8 +32,8 @@ public class ArmDualPID extends CommandBase  {
 
     public void initialize(){
         //below values are temporary
-        pid1.setOutputRange(0.0, 0.0);
-        pid2.setOutputRange(0.0, 0.0);
+        pid1.setOutputRange(0.5, 0.0);
+        pid2.setOutputRange(0.5, 0.0);
 
         pid1.setSetpoint(targetVal1);
         pid2.setSetpoint(targetVal2);
@@ -46,8 +46,8 @@ public class ArmDualPID extends CommandBase  {
     public void execute(boolean intrrupted){
         elapsedTime = Util.getElaspedTime(tempTime);
 
-        voltsExtend = 0.5 * pid1.calculate(armMotor1.getEncoder().getPosition(), tempTime);
-        voltsRotate = 0.5 * pid2.calculate(armMotor2.getEncoder().getPosition(), tempTime);
+        voltsExtend = pid1.calculate(armMotor1.getEncoder().getPosition(), tempTime);
+        voltsRotate = pid2.calculate(armMotor2.getEncoder().getPosition(), tempTime);
 
         armMotor1.set(voltsExtend);
         armMotor2.set(voltsRotate);

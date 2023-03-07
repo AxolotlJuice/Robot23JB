@@ -20,7 +20,7 @@ public class ArmWinchPresets extends CommandBase{
 
     private SynchronousPID          pid1 = new SynchronousPID(0, 0, 0);
     private SynchronousPID          pid2 = new SynchronousPID(0, 0, 0);
-
+    
     public enum Preset{
         GRABBING,
         POLEHIGH,
@@ -40,8 +40,10 @@ public class ArmWinchPresets extends CommandBase{
         switch(preset){
 
             case GRABBING:
-                winch.getMotor().getEncoder().setPosition(0.0);
-                arm.getMotor().getEncoder().setPosition(0.0);
+                commands = new SequentialCommandGroup();
+                command = new ArmWinchSetPose(arm, winch, new Pose2d(39.7256, 109.9873, null));
+                commands.addCommands(command);
+                commands.schedule();
 
             case POLEHIGH:
                 commands = new SequentialCommandGroup();

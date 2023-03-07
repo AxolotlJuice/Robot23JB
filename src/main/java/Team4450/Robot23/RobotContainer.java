@@ -6,34 +6,49 @@ import static Team4450.Robot23.Constants.*;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
-import Team4450.Lib.MonitorCompressor;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
 import Team4450.Robot23.commands.DriveCommand;
+import Team4450.Robot23.commands.DriveWinch;
+import Team4450.Robot23.commands.HoldWinchPosition;
+import Team4450.Robot23.commands.DriveArm;
+import Team4450.Robot23.commands.DriveClaw;
+import Team4450.Robot23.commands.RaiseArmStart;
+import Team4450.Robot23.commands.ArmWinchPresets;
+/* 
+import Team4450.Robot23.commands.CloseClaw;
+import Team4450.Robot23.commands.DropArm;
+import Team4450.Robot23.commands.ExtendArm;
+import Team4450.Robot23.commands.HoldWinchPosition;
+import Team4450.Robot23.commands.OpenClaw;
+import Team4450.Robot23.commands.RaiseArmStart;
+import Team4450.Robot23.commands.RetractArm;
+
+import Team4450.Robot23.commands.autonomous.DriveOut;
+import Team4450.Robot23.commands.autonomous.ScoreLow;
+*/
 import Team4450.Robot23.commands.SetToStartPositionCommand;
+import Team4450.Robot23.Constants.Preset;
 import Team4450.Robot23.commands.Utility.NotifierCommand;
+
 import Team4450.Robot23.commands.autonomous.TestAuto1;
 import Team4450.Robot23.commands.autonomous.TestAuto3;
 import Team4450.Robot23.commands.autonomous.TestAuto4;
+import Team4450.Robot23.subsystems.Arm;
+import Team4450.Robot23.subsystems.Claw;
 import Team4450.Robot23.subsystems.DriveBase;
 import Team4450.Robot23.subsystems.ShuffleBoard;
-
-import edu.wpi.first.wpilibj.AnalogInput;
+import Team4450.Robot23.subsystems.Winch;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.util.sendable.SendableRegistry;
@@ -56,17 +71,29 @@ public class RobotContainer
 {
 	// Subsystems.
 
-	public static ShuffleBoard			shuffleBoard;
-	public static DriveBase 			driveBase;
-	public static PhotonCamera			phCamera;
-	public static PhotonPoseEstimator	phPoseEstimator;
+	public static ShuffleBoard	shuffleBoard;
+	public static DriveBase 	driveBase;
+	public static Winch			winch;
+	public static Arm			arm;
+	public static Claw			claw;
+	public Preset 				telePreset;
 
 	// Subsystem Default Commands.
 
-	//private final TankDrive		driveCommand;
-
     // Persistent Commands.
+	private RaiseArmStart		raiseArmStart;
+	private HoldWinchPosition	holdWinchPosition;
 
+	
+	/* 
+	private DropArm				dropArm;
+	private RetractArm			retractArm;
+	private OpenClaw			openClaw;
+	private RaiseArm			raiseArm1, raiseArm2;
+	private CloseClaw			closeClawCube, closeClawCone;
+	private ExtendArm			extendArm1, extendArm2;
+	
+	*/
 	// Some notes about Commands.
 	// When a Command is created with the New operator, its constructor is called. When the
 	// command is added to the Scheduler to be run, its initialize method is called. Then on
@@ -112,16 +139,16 @@ public class RobotContainer
 	private enum AutoProgram
 	{
 		NoProgram,
+		DriveOut,
+		ScoreLow,
 		TestAuto1,
 		TestAuto3,
 		TestAuto4
 	}
 
-	public static Pose2d	defaultStartingPose;
-
 	// Classes to access drop down lists on Driver Station.
 	private static SendableChooser<AutoProgram>	autoChooser;
-	private static SendableChooser<Pose2d>		startingPoseChooser;
+	private static SendableChooser<Integer>		startingPoseChooser;
 
 	/**
 	 * The container for the robot. Contains subsystems, Opertor Interface devices, and commands.
@@ -187,9 +214,26 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
+		winch = new Winch();
+		arm = new Arm();
+		claw = new Claw();
+		tele
 
 		// Create any persistent commands.
-
+		holdWinchPosition = new HoldWinchPosition(winch);
+		/* 
+		dropArm = new DropArm(winch, arm);
+		retractArm = new RetractArm(arm);
+		openClaw = new OpenClaw(claw);
+		closeClawCone = new CloseClaw(claw, 13000);
+		closeClawCube = new  CloseClaw(claw, 3000);
+		raiseArm1 = new RaiseArm(winch, 100);
+		raiseArm2 = new RaiseArm(winch, 200);
+		extendArm1 = new ExtendArm(arm, 200);
+		extendArm2 = new ExtendArm(arm, 300);
+		raiseArmStart = new RaiseArmStart(winch);
+		
+		*/
 		// Set any subsystem Default commands.
 
 		// Set the default drive command. This command will be scheduled automatically to run
@@ -225,6 +269,12 @@ public class RobotContainer
 				() -> driverPad.getLeftX(),	// Strafe
 				driverPad.getRightXDS(),	// Rotation
 				driverPad));
+
+		winch.setDefaultCommand(new DriveWinch(winch, () -> utilityPad.getRightY()));
+
+		claw.setDefaultCommand(new DriveClaw(claw, () -> utilityPad.getRightX()));
+
+		arm.setDefaultCommand(new DriveArm(arm, () -> utilityPad.getLeftY()));
 
 		// Start the compressor, PDP and camera feed monitoring Tasks.
 
@@ -324,6 +374,9 @@ public class RobotContainer
 		// Reset drive wheel distance traveled.
 		new Trigger(() -> driverPad.getXButton())
     		.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
+
+		// Apply holding voltage to winch.
+		new Trigger(() -> driverPad.getRightTrigger()).toggleOnTrue(holdWinchPosition);
 	 
 		// -------- Utility pad buttons ----------
 		// What follows is an example from 2022 robot:
@@ -340,7 +393,7 @@ public class RobotContainer
 		// So any function that operates valves will trigger the watchdogs. Again, the watchdog 
 		// notifications are only a warning (though too much delay on main thread can effect robot
 		// operation) they can fill the Riolog to the point it is not useful.
-		// Note: the threaded command can only execute a runnable (function on a class) not a Command.
+		// Note: the threaded command can only execute a run(((((nable (function on a class) not a Command.
 		
 		// Toggle pickup deployment
 		//new Trigger(() -> utilityPad.getLeftBumper())
@@ -348,6 +401,39 @@ public class RobotContainer
 			//.onTrue(new InstantCommand(pickup::toggleDeploy, pickup));
 		//	.onTrue(new NotifierCommand(pickup::toggleDeploy, 0.0, "DeployPickup", pickup));
 
+		// Start or stop (if already in progress), the command to raise arm to start position.
+		new Trigger(() -> utilityPad.getPOVAngle(0)).toggleOnTrue(raiseArmStart);
+
+		// Start or stop (if already in progress), the command to drop arm to low position.
+		new Trigger(() -> utilityPad.getRightBumper()).toggleOnTrue();
+
+		// Start or stop (if already in progress), the command to retract arm to inward position.
+		//new Trigger(() -> utilityPad.getPOVAngle(180)).toggleOnTrue(retractArm);
+
+		// Start or stop (if already in progress), the command to fully open the claw.
+		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(openClaw);
+
+		// Start or stop (if already in progress), the command to close claw on cube.
+		new Trigger(() -> utilityPad.getLeftBumper()).toggleOnTrue(closeClawCube);
+
+		// Start or stop (if already in progress), the command to close claw on cone.
+		new Trigger(() -> utilityPad.getLeftTrigger()).toggleOnTrue(closeClawCone);
+
+		// Start or stop (if already in progress), the command to raise the arm to scoring position 1.
+		new Trigger(() -> utilityPad.getYButton()).toggleOnTrue(raiseArm1);
+
+		// Start or stop (if already in progress), the command to raise the arm to scoring position 2.
+		//new Trigger(() -> utilityPad.getXButton()).toggleOnTrue(raiseArm2);
+
+		// Start or stop (if already in progress), the command to extend the arm to scoring position 1.
+		new Trigger(() -> utilityPad.getBButton()).toggleOnTrue(extendArm1);
+
+		// Start or stop (if already in progress), the command to extend the arm to scoring position 2.
+		new Trigger(() -> utilityPad.getAButton()).toggleOnTrue(extendArm2);
+
+		new Trigger(() -> utilityPad.getXButton()).onTrue(new InstantCommand(arm::resetPosition));
+		//new Trigger(() -> utilityPad.getYButton()).onTrue(new InstantCommand(winch::resetPosition));
+		//new Trigger(() -> utilityPad.getBButton()).onTrue(new InstantCommand(claw::resetPosition));
 	}
 
 	/**
@@ -360,6 +446,7 @@ public class RobotContainer
 	{
 		AutoProgram		program = AutoProgram.NoProgram;
 		Pose2d			startingPose = DEFAULT_STARTING_POSE;
+		Integer			startingPoseIndex = 0;
 		Command			autoCommand = null;
 		
 		Util.consoleLog();
@@ -368,7 +455,14 @@ public class RobotContainer
 		{
 			program = autoChooser.getSelected();
 
-			startingPose = startingPoseChooser.getSelected();
+			startingPoseIndex = startingPoseChooser.getSelected();
+
+			startingPose = STARTING_POSES[startingPoseIndex];
+
+			// Adjust Y position for Red side of the field. Hopefully this works.
+			
+			if (alliance == Alliance.Red) startingPose = new Pose2d(startingPose.getX(), 8.014 - startingPose.getY(), 
+																	startingPose.getRotation());
 		}
 		catch (Exception e)	{ Util.logException(e); }
 		
@@ -378,6 +472,14 @@ public class RobotContainer
 				autoCommand = null;
 				break;
  				
+			case DriveOut:
+				autoCommand = new DriveOut(driveBase, startingPose, startingPoseIndex);
+				break;
+ 				
+			case ScoreLow:
+				autoCommand = new ScoreLow(driveBase, winch, arm, claw, startingPose, startingPoseIndex);
+				break;
+				
 			case TestAuto1:
 			 	autoCommand = new TestAuto1(driveBase, startingPose);
 			 	break;
@@ -405,6 +507,8 @@ public class RobotContainer
 		
 		SendableRegistry.add(autoChooser, "Auto Program");
 		autoChooser.setDefaultOption("No Program", AutoProgram.NoProgram);
+		autoChooser.addOption("Drive Out", AutoProgram.DriveOut);		
+		autoChooser.addOption("Score Low", AutoProgram.ScoreLow);		
 		autoChooser.addOption("Test Auto 1", AutoProgram.TestAuto1);		
 		autoChooser.addOption("Test Auto 3", AutoProgram.TestAuto3);		
 		autoChooser.addOption("Test Auto 4", AutoProgram.TestAuto4);		
@@ -418,13 +522,14 @@ public class RobotContainer
 	private void setStartingPoses()
 	{
 		Util.consoleLog();
-		
-		startingPoseChooser = new SendableChooser<Pose2d>();
+
+		startingPoseChooser = new SendableChooser<Integer>();
 		
 		SendableRegistry.add(startingPoseChooser, "Start Position");
-		startingPoseChooser.setDefaultOption("Default", DEFAULT_STARTING_POSE);
-		//startingPoseChooser.addOption("Blue 1", BLUE_1);		
-				
+		startingPoseChooser.setDefaultOption("None", 0);
+
+		for (Integer i = 1; i < 10; i++) startingPoseChooser.addOption(i.toString(), i);		
+		
 		SmartDashboard.putData(startingPoseChooser);
 	}
 

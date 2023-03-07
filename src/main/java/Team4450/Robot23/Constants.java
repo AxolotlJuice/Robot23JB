@@ -183,5 +183,13 @@ public final class Constants
 
     public static final int     WINCH_SWITCH_LOWER = 0;
     public static final int     WINCH_SWITCH_UPPER = 1;
+    
+    public enum Preset{
+        GRABBING,
+        POLEHIGH,
+        POLELOW,
+        TAGHIGH,
+        TAGLOW
+    }
 }
 

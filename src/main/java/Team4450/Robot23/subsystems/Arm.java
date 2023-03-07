@@ -28,6 +28,13 @@ public class Arm extends SubsystemBase{
     private Command			        command = null;
     private SequentialCommandGroup  commands = null;
 
+    public enum Preset{
+        GRABBING,
+        POLEHIGH,
+        POLELOW,
+        TAGHIGH,
+        TAGLOW
+    }
 
     public Arm(){
         Util.consoleLog("Arm created!");
@@ -51,16 +58,16 @@ public class Arm extends SubsystemBase{
 
         while(armMotor.getEncoder().getVelocity() != 0.0){
         
-        elapsedTime = Util.getElaspedTime();
+            elapsedTime = Util.getElaspedTime();
 
-        currentSpeed = pid.calculate(armMotor.getEncoder().getPosition(), elapsedTime);
+            currentSpeed = pid.calculate(armMotor.getEncoder().getPosition(), elapsedTime);
 
-        armMotor.set(currentSpeed);
+            armMotor.set(currentSpeed);
         }
     }
     
-    public void setArmSpeed(double speed){
-        armMotor.set(speed);
+    public void setPower(double power){
+        armMotor.set(power);
     }
 
     public CANSparkMax getMotor(){

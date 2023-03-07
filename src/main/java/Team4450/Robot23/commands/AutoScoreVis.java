@@ -27,7 +27,7 @@ import Team4450.Robot23.subsystems.LimeLight;
 import Team4450.Robot23.subsystems.Winch;
 import Team4450.Robot23.subsystems.Claw.ClawPosition;
 import Team4450.Robot23.Constants;
-import Team4450.Robot23.commands.ArmWinchPresets.Preset;
+import Team4450.Robot23.Constants.Preset;
 
 import org.opencv.core.Rect;
 
@@ -185,6 +185,7 @@ public class AutoScoreVis extends CommandBase {
 
     public void end(){
         //score with arm
+        
         commands = new SequentialCommandGroup();
 
         command = new ArmWinchPresets(arm, winch, armTargetPose);

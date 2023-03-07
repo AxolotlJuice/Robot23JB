@@ -7,10 +7,11 @@ import com.revrobotics.RelativeEncoder;
 import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static Team4450.Robot23.Constants.*;
 
-public class Winch {
+public class Winch extends SubsystemBase{
 
     private double                  elapsedTime, power;
 
@@ -79,18 +80,44 @@ public class Winch {
         holdPosition();
     }
 
+    public void stop()
+    {
+        winchMotor.stopMotor();
+    }
 
-    public void setWinchSpeed(double speed){
-        winchMotor.set(speed);
+    public void setPower(double power){
+        winchMotor.set(power);
     }
 
     public CANSparkMax getMotor(){
         return winchMotor;
     }
 
+    public double getPosition(){
+        return winchMotor.getEncoder().getPosition();
+    }
+
     public void holdPosition()
     {
         winchMotor.set(.10);
     }
+//-----------------------------------------------------------------------------------------------------
 
+    /**
+     * Returns state of lower position limit switch.
+     * @return True is at low position.
+     */
+    public boolean getLowerSwitch()
+    {
+        return lowerLimitSwitch.get();
+    }
+
+    /**
+     * Returns state of pperr position limit switch.
+     * @return True is at high position.
+     */
+    public boolean getUpperSwitch()
+    {
+        return upperLimitSwitch.get();
+    }
 }

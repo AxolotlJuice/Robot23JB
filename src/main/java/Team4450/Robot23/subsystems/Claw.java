@@ -9,8 +9,9 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import Team4450.Lib.FXEncoder;
 import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Claw {
+public class Claw extends SubsystemBase{
     
     private WPI_TalonFX         clawMotor = new WPI_TalonFX(15);
     private FXEncoder           encoder = new FXEncoder(clawMotor);

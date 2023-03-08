@@ -1,39 +1,37 @@
 package Team4450.Robot23.subsystems;
 
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-
 import Team4450.Lib.FXEncoder;
 import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
+import Team4450.Robot23.Constants.*;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase{
     
-    private WPI_TalonFX         clawMotor = new WPI_TalonFX(15);
-    private FXEncoder           encoder = new FXEncoder(clawMotor);
+    private WPI_TalonFX                     clawMotor = new WPI_TalonFX(15);
+    private FXEncoder                       encoder = new FXEncoder(clawMotor);
 
-    private SynchronousPID      pid = new SynchronousPID(0, 0, 0);
+    private SynchronousPID                  pid = new SynchronousPID(0, 0, 0);
 
-    private ClawPosition        clawState;
+    private ClawPosition                    clawState;
 
-    private double              power, time, lastTimeCalled;
+    private double                          power, time, lastTimeCalled;
 
-    private final double        CLAW_MAX = 13000, tolerance = 1000;
+    private Pair<WPI_TalonFX, FXEncoder>    talonPair = new Pair(clawMotor, encoder);
+
+    private final double                    CLAW_MAX = 13000, tolerance = 1000;
+
+    
     
     /*
      * Each enum represent a predetermined position the Claw will run to
      * @param OPEN
      * @
      */
-    public enum ClawPosition{
-        OPEN,
-        CLOSEDCONE,
-        CLOSEDCUBE,
-    }
     
     public Claw(){
         Util.consoleLog("Claw created!");
@@ -105,6 +103,10 @@ public class Claw extends SubsystemBase{
 
     public ClawPosition getClawState(){
         return clawState;
+    }
+
+    public Pair<WPI_TalonFX, FXEncoder> getTalonPair(){
+        return talonPair; 
     }
 
 

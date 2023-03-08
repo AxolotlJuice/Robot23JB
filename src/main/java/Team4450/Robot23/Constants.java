@@ -181,8 +181,8 @@ public final class Constants
 
     public static final Translation3d LIMETOCENTER = new Translation3d();
 
-    public static final int     WINCH_SWITCH_LOWER = 0;
-    public static final int     WINCH_SWITCH_UPPER = 1;
+    public static final int           WINCH_SWITCH_LOWER = 0;
+    public static final int           WINCH_SWITCH_UPPER = 1;
     
     public enum Preset{
         GRABBING,
@@ -191,5 +191,12 @@ public final class Constants
         TAGHIGH,
         TAGLOW
     }
+
+    public enum ClawPosition{
+        OPEN,
+        CLOSEDCONE,
+        CLOSEDCUBE,
+    }
+
 }
 

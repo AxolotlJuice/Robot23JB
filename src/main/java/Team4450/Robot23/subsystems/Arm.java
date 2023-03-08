@@ -28,14 +28,6 @@ public class Arm extends SubsystemBase{
     private Command			        command = null;
     private SequentialCommandGroup  commands = null;
 
-    public enum Preset{
-        GRABBING,
-        POLEHIGH,
-        POLELOW,
-        TAGHIGH,
-        TAGLOW
-    }
-
     public Arm(){
         Util.consoleLog("Arm created!");
     }

@@ -83,8 +83,18 @@ public class RobotContainer
     // Persistent Commands.
 	private RaiseArmStart		raiseArmStart;
 	private HoldWinchPosition	holdWinchPosition;
+	private ArmWinchPresets		highTagPos;
+	private ArmWinchPresets		lowTagPos;
+	private ArmWinchPresets		highPolePos;
+	private ArmWinchPresets		lowPolePos;
+	private ArmWinchPresets		grabbingPos;
 
-	
+	private Preset                    highTag = Preset.TAGHIGH;
+    private Preset                    lowTag = Preset.TAGLOW;
+    private Preset                    highPole = Preset.POLEHIGH;
+    private Preset                    lowPole = Preset.POLELOW;
+    private Preset                    grabbing = Preset.GRABBING;
+
 	/* 
 	private DropArm				dropArm;
 	private RetractArm			retractArm;
@@ -217,10 +227,16 @@ public class RobotContainer
 		winch = new Winch();
 		arm = new Arm();
 		claw = new Claw();
-		tele
+		
 
 		// Create any persistent commands.
 		holdWinchPosition = new HoldWinchPosition(winch);
+		highTagPos = new ArmWinchPresets(arm, winch, highTag);
+		lowTagPos = new ArmWinchPresets(arm, winch, lowTag);
+		highPolePos = new ArmWinchPresets(arm, winch, highPole);
+		lowPolePos = new ArmWinchPresets(arm, winch, lowPole);
+		grabbingPos = new ArmWinchPresets(arm, winch, grabbing);
+
 		/* 
 		dropArm = new DropArm(winch, arm);
 		retractArm = new RetractArm(arm);
@@ -405,13 +421,13 @@ public class RobotContainer
 		new Trigger(() -> utilityPad.getPOVAngle(0)).toggleOnTrue(raiseArmStart);
 
 		// Start or stop (if already in progress), the command to drop arm to low position.
-		new Trigger(() -> utilityPad.getRightBumper()).toggleOnTrue();
+		new Trigger(() -> utilityPad.getRightBumper()).toggleOnTrue(grabbingPos);
 
 		// Start or stop (if already in progress), the command to retract arm to inward position.
 		//new Trigger(() -> utilityPad.getPOVAngle(180)).toggleOnTrue(retractArm);
 
 		// Start or stop (if already in progress), the command to fully open the claw.
-		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(openClaw);
+		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(claw.setClawState(Constants.ClawPosition.OPEN));
 
 		// Start or stop (if already in progress), the command to close claw on cube.
 		new Trigger(() -> utilityPad.getLeftBumper()).toggleOnTrue(closeClawCube);

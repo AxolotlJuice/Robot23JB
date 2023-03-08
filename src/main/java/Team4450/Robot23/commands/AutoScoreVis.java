@@ -185,15 +185,12 @@ public class AutoScoreVis extends CommandBase {
 
     public void end(){
         //score with arm
-        
+        /* 
         commands = new SequentialCommandGroup();
-
-        command = new ArmWinchPresets(arm, winch, armTargetPose);
-        commands.addCommands(command);
-
+        commands.addCommands(new ArmWinchPresets(arm, winch, armTargetPose));
         commands.schedule();
-
         claw.setClawState(ClawPosition.OPEN);
+        */
 
         //resets hadTargets
         hadTargets = false;

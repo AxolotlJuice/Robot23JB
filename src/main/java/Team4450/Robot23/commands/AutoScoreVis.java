@@ -25,10 +25,7 @@ import Team4450.Robot23.subsystems.Claw;
 import Team4450.Robot23.subsystems.DriveBase;
 import Team4450.Robot23.subsystems.LimeLight;
 import Team4450.Robot23.subsystems.Winch;
-import Team4450.Robot23.subsystems.Claw.ClawPosition;
-import Team4450.Robot23.Constants;
-import Team4450.Robot23.Constants.Preset;
-
+import Team4450.Robot23.Constants.*;
 import org.opencv.core.Rect;
 
 import edu.wpi.first.wpilibj.Timer;

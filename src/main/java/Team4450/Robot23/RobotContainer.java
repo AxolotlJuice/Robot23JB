@@ -427,7 +427,7 @@ public class RobotContainer
 		//new Trigger(() -> utilityPad.getPOVAngle(180)).toggleOnTrue(retractArm);
 
 		// Start or stop (if already in progress), the command to fully open the claw.
-		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(claw.setClawState(Constants.ClawPosition.OPEN));
+		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(new SetClawState(claw, ));
 
 		// Start or stop (if already in progress), the command to close claw on cube.
 		new Trigger(() -> utilityPad.getLeftBumper()).toggleOnTrue(closeClawCube);

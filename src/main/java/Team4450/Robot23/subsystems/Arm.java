@@ -26,7 +26,7 @@ public class Arm extends SubsystemBase{
     private DigitalInput    limitSwitch = new DigitalInput(ARM_SWITCH);
 
     private Command			        command = null;
-    private SequentialCommandGroup  commands = null;
+    private SequentialCommandGroup  commands = null; 
 
     public Arm(){
         Util.consoleLog("Arm created!");

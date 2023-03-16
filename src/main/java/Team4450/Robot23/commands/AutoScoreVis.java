@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import Team4450.Robot23.subsystems.Arm;
-import Team4450.Robot23.subsystems.Claw;
+import Team4450.Robot23.subsystems.JClaw;
 import Team4450.Robot23.subsystems.DriveBase;
 import Team4450.Robot23.subsystems.LimeLight;
 import Team4450.Robot23.subsystems.Winch;
@@ -44,7 +44,7 @@ public class AutoScoreVis extends CommandBase {
 
     private Arm                 arm;
     private Winch               winch;
-    private Claw                claw;
+    private JClaw                claw;
     private DriveBase           sDriveBase;
     private PhotonCamera        phCamera;
     private PhotonPoseEstimator phPoseEstimator;

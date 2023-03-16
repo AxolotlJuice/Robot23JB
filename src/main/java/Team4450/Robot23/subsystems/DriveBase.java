@@ -32,11 +32,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
+
 import static Team4450.Robot23.Constants.*;
 
 public class DriveBase extends SubsystemBase 
 {
-  private boolean       autoReturnToZero = false, fieldOriented = true, currentBrakeMode = true;
+  private boolean       autoReturnToZero = false, fieldOriented = true, currentBrakeMode = false;
   private double        distanceTraveled;
   private double        yawAngle, lastYawAngle;
   private Pose2d        lastPose;
@@ -234,6 +236,11 @@ public class DriveBase extends SubsystemBase
 
     m_backRightModule.setTranslation2d(new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
     
+    // Set starting brake mode. Set by definition above. The swerve code has a built in default
+    // of brakes on but turning brakes off is much better when battery is low.
+
+    setBrakeMode(currentBrakeMode);
+
     // Encoders to zero.
     resetModuleEncoders();
 
@@ -313,6 +320,12 @@ public class DriveBase extends SubsystemBase
    */
   public void drive(double throttle, double strafe, double rotation)
   {
+    // Invert throttle & strafe to fix the problem with starting with robot
+    // facing backwards.
+
+    //throttle *= -1;
+    //strafe   *= -1;
+
     // Convert joystick % values into speeds.
 
     throttle *= MAX_VELOCITY_METERS_PER_SECOND;
@@ -518,21 +531,11 @@ public class DriveBase extends SubsystemBase
   {
     Util.consoleLog("Pose: x=%.3f  y=%.3f  rot=%.2f deg", pose.getX(), pose.getY(), pose.getRotation().getDegrees());
 
-    // This is the old way of doing it (pre-2023).
-    //m_odometry.resetPosition(pose, pose.getRotation());
-
     modulePositions[0] = m_frontLeftModule.getFieldPosition();
     modulePositions[1] = m_frontRightModule.getFieldPosition();
     modulePositions[2] = m_backLeftModule.getFieldPosition();
     modulePositions[3] = m_backRightModule.getFieldPosition();
 
-    // TODO: The first parameter is gyro angle but found success using the
-    // pose angle, but this may not be the correct way to do this now that
-    // odometry is using position instead of velocity (as of 2023).
-
-    //m_odometry.resetPosition(pose.getRotation(), modulePositions, pose);
-    
-    // TODO: Try this when robot running again.
     m_odometry.resetPosition(getGyroAngleRotation2d(), modulePositions, pose);
 
     lastPose = pose;
@@ -694,7 +697,7 @@ public class DriveBase extends SubsystemBase
     // sense and suggests somewhere in the swerve code it is tracking
     // drive information that is not being reset and so with encoders
     // reset, the two bits of information are no longer in sync.
-    // TODO: Researh this further trying to explain why resetting the
+    // TODO: Research this further trying to explain why resetting the
     // encoders here does not work.
     //resetModuleEncoders();
   }
@@ -710,7 +713,7 @@ public class DriveBase extends SubsystemBase
    */
   public double getDistanceTraveled()
   {
-    return distanceTraveled;
+    return distanceTraveled; // * -1;
   }
 
   /**

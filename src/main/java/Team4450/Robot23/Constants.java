@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "JB23-02.25.23";
+	public static String		PROGRAM_NAME = "RAC23-03.11.23-3";
 
 	public static Robot			robot;
 
@@ -53,9 +53,10 @@ public final class Constants
 	//public static final int		COMPRESSOR = 0;
 
 	// Digital Input port assignments. Encoder takes 2 ports.
-    public static final int     WINCH_SWITCH = 0;
-    public static final int     ARM_SWITCH = 1;
-    public static final int     CLAW_SWITCH = 2;     
+    public static final int     WINCH_SWITCH_LOWER = 0;
+    public static final int     WINCH_SWITCH_UPPER = 1;
+    public static final int     ARM_SWITCH = 2;
+    public static final int     CLAW_SWITCH = 3;     
 	  
 	// Analog Input port assignments.
 	
@@ -72,25 +73,39 @@ public final class Constants
 	public static final int		LCD_10 = 10;	// ShuffleBoard subsystem.
 
 	// Default starting field position in meters for pose tracking.
-	public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(2.610, 2.847, Rotation2d.fromDegrees(0));
-    
+	public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+
+    public static Pose2d[]      STARTING_POSES = new Pose2d[]
+    {
+        new Pose2d(2.553, 4.915, Rotation2d.fromDegrees(0)), // First pose is the default if driver selects no
+        new Pose2d(2.553, 4.915, Rotation2d.fromDegrees(0)), // starting pose. Then positions 1-9.
+        new Pose2d(2.553, 4.360, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 3.836, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 3.361, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 2.838, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 2.340, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 1.805, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 1.265, Rotation2d.fromDegrees(0)),
+        new Pose2d(2.553, 0.713, Rotation2d.fromDegrees(0))
+    };
+
 	// Next group of constants are for Swerve drive.
 
     // The maximum voltage that will be delivered to the drive motors. This can be reduced to cap the 
     // robot's maximum speed. Typically, this is useful during initial testing of the robot.
    
-	public static final double MAX_VOLTAGE = 6.0; //12.0;
+	public static final double MAX_VOLTAGE = 7.5; //12.0;
 
 	public static final double  THROTTLE_DEADBAND = .05;
     public static final double  ROTATION_DEADBAND = .05;
 
     // Slew is rate of change per second in whatever unit you are using.
-    // We are doing % stick input so unit is 100% or 1. So a slew of i is
+    // We are doing % stick input so unit is 100% or 1. So a slew of 1 is
     // ramp to 1 (100% power) in 1 second. So a slew of 3 is 3 units per
     // second or 1 unit in 1/3 second. So larger slew is faster ramp to
     // 100%. 1.5 is 100% in 3/4 second. 2 is 100% in 1/2 second.
     public static final double  THROTTLE_SLEW = 1.5;        
-    public static final double  ROTATION_SLEW = 2.0;  //3.0;
+    public static final double  ROTATION_SLEW = 1.0;  //3.0;
 
     /**
      * The left-to-right distance between the drivetrain wheels
@@ -130,7 +145,7 @@ public final class Constants
     // Robot will go faster than this, more like 3 mps but this value tones down autonomous speed.
 
     public static final double  MAX_WHEEL_SPEED = 2.0;     // Meters per second.
-    public static final double  MAX_WHEEL_ACCEL = 1.0;     // Meters per second per second.
+    public static final double  MAX_WHEEL_ACCEL = 2.0;     // Meters per second per second.
     
     // Estimated by eyeball observation. Needs to be estimated each new robot.
 
@@ -151,7 +166,7 @@ public final class Constants
     // public static final double  DB_VELOCITY_KP = .12;  
     // public static final double  DB_VELOCITY_KD = 0.0;
 
-    public static final AprilTagFieldLayout APRILTAGFIELDLAYOUT = new AprilTagFieldLayout(Arrays.asList(
+    private final AprilTagFieldLayout aprilFieldLayout = new AprilTagFieldLayout(Arrays.asList(
     new AprilTag(1, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(2, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(3, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
@@ -161,6 +176,7 @@ public final class Constants
     new AprilTag(7, new Pose3d(Units.inchesToMeters( 40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, 0.0))),
     new AprilTag(8, new Pose3d(Units.inchesToMeters( 40.45), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, 0.0)))
   ), Units.inchesToMeters(651.25), Units.inchesToMeters(315.5));
+
 
 
   //-------------------- No student code above this line ------------------------------------------------------
@@ -180,9 +196,6 @@ public final class Constants
     new Pole(12, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0))));
 
     public static final Translation3d LIMETOCENTER = new Translation3d();
-
-    public static final int           WINCH_SWITCH_LOWER = 0;
-    public static final int           WINCH_SWITCH_UPPER = 1;
     
     public enum Preset{
         GRABBING,

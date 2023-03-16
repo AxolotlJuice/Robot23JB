@@ -1,119 +1,50 @@
 package Team4450.Robot23.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import Team4450.Lib.FXEncoder;
-import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
-import Team4450.Robot23.Constants.*;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Claw extends SubsystemBase{
-    
-    private WPI_TalonFX                     clawMotor = new WPI_TalonFX(15);
-    private FXEncoder                       encoder = new FXEncoder(clawMotor);
+import static Team4450.Robot23.Constants.*;
 
-    private SynchronousPID                  pid = new SynchronousPID(0, 0, 0);
+public class Claw extends SubsystemBase
+{
+    private WPI_TalonFX     motor = new WPI_TalonFX(CLAW_MOTOR);
+    private FXEncoder       encoder = new FXEncoder(motor);
 
-    private ClawPosition                    clawState;
+    private final double    CLAW_MAX = 13000;
 
-    private double                          power, time, lastTimeCalled;
+    public Claw()
+    {
+        Util.consoleLog();
 
-    private Pair<WPI_TalonFX, FXEncoder>    talonPair = new Pair(clawMotor, encoder);
-
-    private final double                    CLAW_MAX = 13000, tolerance = 1000;
-
-    
-    
-    /*
-     * Each enum represent a predetermined position the Claw will run to
-     * @param OPEN
-     * @
-     */
-    
-    public Claw(){
-        Util.consoleLog("Claw created!");
-    }
-
-    public void initialize(){
-
-        clawMotor.setInverted(true);
+        motor.setInverted(true);
 
         encoder.setInverted(true);
 
-        clawMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        // Disable automatic application of limit switches connected to the TalonFX controller.
+        // The JST wire used to connect the switches to the controller is wired as follows:
+        // black = forward switch, red = forward ground, white = reverse ground, yellow =
+        // reverse switch. Once enabled the controller automatically obeys the switches.
+        // unfortunately we guessed on what "forward/reverse" mean, so the robot is wired for 
+        // reverse, which it turns out prevents claw from closing. So we turn auto application 
+        // of the switches off and do it in our code below.
+
+        motor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
                                              LimitSwitchNormal.Disabled,
                                              30);
 
-        clawMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
                                              LimitSwitchNormal.Disabled,
                                              30);
-        
-        setClawState(ClawPosition.OPEN);
-        
-        Util.consoleLog();
     }
 
-    public void periodic(){
-        //this method is called once per schedular run
-    }
-
-    public void setClawState(ClawPosition desiredState){
-        //temp values
-        
-        pid.setOutputRange(-.20, .20);
-        
-        double time = Util.getElaspedTime(lastTimeCalled);
-        lastTimeCalled = Util.timeStamp();
-
-        switch(desiredState){
-            
-            case CLOSEDCONE:
-                pid.setSetpoint(13000);
-
-                while(pid.onTarget(tolerance)){
-                    time = Util.getElaspedTime(lastTimeCalled);
-                    power = pid.calculate(encoder.getAbsolutePosition(), time);
-                    clawMotor.set(power);
-                    clawState = ClawPosition.CLOSEDCONE;
-                }
-                break;
-            
-            case CLOSEDCUBE:
-                while(pid.onTarget(tolerance)){
-                    pid.setSetpoint(3000);
-
-                    time = Util.getElaspedTime(lastTimeCalled);
-                    power = pid.calculate(encoder.getAbsolutePosition(), time);
-                    clawMotor.set(power);
-                    clawState = ClawPosition.CLOSEDCUBE;
-                }
-                break;
-
-            case OPEN:
-                while(clawMotor.isRevLimitSwitchClosed() != 1){
-                    setPower(.20);
-                }
-                break;
-            
-        }
-    }
-
-    public ClawPosition getClawState(){
-        return clawState;
-    }
-
-    public Pair<WPI_TalonFX, FXEncoder> getTalonPair(){
-        return talonPair; 
-    }
-
-
-//----------------------------------------------------------------------------------------------------------------------
-
-
-
+    /**
+     * Sets claw motor power.
+     * @param power + means open claw, - means close claw.
+     */
     public void setPower(double power)
     {
         // If power positive, which means open, check limit switch stop if true.
@@ -125,14 +56,45 @@ public class Claw extends SubsystemBase{
 
         power = Util.clampValue(power, .20);
         
-        clawMotor.set(power);
+        motor.set(power);
    }
 
-   public boolean getOpenSwitch()
+    public void stop()
     {
-        if (clawMotor.isRevLimitSwitchClosed() == 1)
+        motor.stopMotor();
+    }
+
+    /**
+     * Return encoder tick count.
+     * @return The current tick count.
+     */
+    public int getPosition()
+    {
+        return encoder.get();
+    }
+
+    /**
+     * Reset Claw encoder to zero.
+     */
+    public void resetPosition()
+    {
+        encoder.reset();
+    }
+
+    /**
+     * Returns claw fully open switch state.
+     * @return True when claw fully open.
+     */
+    public boolean getOpenSwitch()
+    {
+        if (motor.isRevLimitSwitchClosed() == 1)
             return false;
         else
             return true;
+    }
+
+    public void updateDS()
+    {
+
     }
 }

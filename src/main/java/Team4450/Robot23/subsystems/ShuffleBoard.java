@@ -58,6 +58,18 @@ public class ShuffleBoard extends SubsystemBase
       
         LCD.printLine(LCD_4, "pose x=%.1fm  y=%.1fm  deg=%.1f  yaw=%.1f", pose.getX(), 
                       pose.getY(), pose.getRotation().getDegrees(), RobotContainer.driveBase.getYaw());
+
+        LCD.printLine(LCD_6, "uLX=%.2f  uLY=%.2f - uRX=%.2f  uRY=%.2f", RobotContainer.utilityPad.getLeftX(),
+                      RobotContainer.utilityPad.getLeftY(), RobotContainer.utilityPad.getRightX(),
+                      RobotContainer.utilityPad.getRightY());
+
+        LCD.printLine(LCD_7, "winchEnc=%.2f  LowSw=%b  highSw=%b - armEnc=%.2f  armSw=%b",
+                      RobotContainer.winch.getPosition(), RobotContainer.winch.getLowerSwitch(),
+                      RobotContainer.winch.getUpperSwitch(), RobotContainer.arm.getPosition(), 
+                      RobotContainer.arm.getSwitch());
+
+        LCD.printLine(LCD_8, "clawEnc=%d  open=%b",
+                      RobotContainer.claw.getPosition(), RobotContainer.claw.getOpenSwitch());                      
                           
         if (tracing) FunctionTracer.INSTANCE.exitFunction("ShuffleBoard.updateDS");
     }
@@ -82,11 +94,13 @@ public class ShuffleBoard extends SubsystemBase
         SmartDashboard.putBoolean("FMS", DriverStation.isFMSAttached());
         SmartDashboard.putBoolean("Overload", false);
         SmartDashboard.putNumber("AirPressure", 0);
-        SmartDashboard.putBoolean("AltDriveMode", false);
-        SmartDashboard.putBoolean("SteeringAssist", false);
-        SmartDashboard.putBoolean("Brake", false);
+        SmartDashboard.putBoolean("Field Oriented", false);
         SmartDashboard.putBoolean("TargetLocked", false);
         SmartDashboard.putBoolean("Autonomous Active", false);
+        SmartDashboard.putBoolean("DropArm", false);
+        SmartDashboard.putBoolean("RetractArm", false);
+        SmartDashboard.putBoolean("OpenClaw", false);
+        SmartDashboard.putBoolean("RaiseArm", false);
     }
 
     /**

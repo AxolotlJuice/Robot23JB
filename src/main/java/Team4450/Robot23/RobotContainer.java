@@ -15,29 +15,23 @@ import Team4450.Lib.XboxController;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
-import Team4450.Robot23.commands.DriveCommand;
-import Team4450.Robot23.commands.DriveWinch;
-import Team4450.Robot23.commands.HoldWinchPosition;
+import Team4450.Robot23.commands.CloseClaw;
 import Team4450.Robot23.commands.DriveArm;
 import Team4450.Robot23.commands.DriveClaw;
-import Team4450.Robot23.commands.RaiseArmStart;
-import Team4450.Robot23.commands.ArmWinchPresets;
-/* 
-import Team4450.Robot23.commands.CloseClaw;
+import Team4450.Robot23.commands.DriveCommand;
+import Team4450.Robot23.commands.DriveWinch;
 import Team4450.Robot23.commands.DropArm;
 import Team4450.Robot23.commands.ExtendArm;
 import Team4450.Robot23.commands.HoldWinchPosition;
 import Team4450.Robot23.commands.OpenClaw;
+import Team4450.Robot23.commands.ParkWheels;
+import Team4450.Robot23.commands.RaiseArm;
 import Team4450.Robot23.commands.RaiseArmStart;
 import Team4450.Robot23.commands.RetractArm;
-
+import Team4450.Robot23.commands.SetToStartPositionCommand;
+import Team4450.Robot23.commands.Utility.NotifierCommand;
 import Team4450.Robot23.commands.autonomous.DriveOut;
 import Team4450.Robot23.commands.autonomous.ScoreLow;
-*/
-import Team4450.Robot23.commands.SetToStartPositionCommand;
-import Team4450.Robot23.Constants.Preset;
-import Team4450.Robot23.commands.Utility.NotifierCommand;
-
 import Team4450.Robot23.commands.autonomous.TestAuto1;
 import Team4450.Robot23.commands.autonomous.TestAuto3;
 import Team4450.Robot23.commands.autonomous.TestAuto4;
@@ -76,34 +70,20 @@ public class RobotContainer
 	public static Winch			winch;
 	public static Arm			arm;
 	public static Claw			claw;
-	public Preset 				telePreset;
 
 	// Subsystem Default Commands.
 
     // Persistent Commands.
-	private RaiseArmStart		raiseArmStart;
-	private HoldWinchPosition	holdWinchPosition;
-	private ArmWinchPresets		highTagPos;
-	private ArmWinchPresets		lowTagPos;
-	private ArmWinchPresets		highPolePos;
-	private ArmWinchPresets		lowPolePos;
-	private ArmWinchPresets		grabbingPos;
 
-	private Preset                    highTag = Preset.TAGHIGH;
-    private Preset                    lowTag = Preset.TAGLOW;
-    private Preset                    highPole = Preset.POLEHIGH;
-    private Preset                    lowPole = Preset.POLELOW;
-    private Preset                    grabbing = Preset.GRABBING;
-
-	/* 
 	private DropArm				dropArm;
 	private RetractArm			retractArm;
 	private OpenClaw			openClaw;
 	private RaiseArm			raiseArm1, raiseArm2;
 	private CloseClaw			closeClawCube, closeClawCone;
 	private ExtendArm			extendArm1, extendArm2;
-	
-	*/
+	private RaiseArmStart		raiseArmStart;
+	//private HoldWinchPosition	holdWinchPosition;
+
 	// Some notes about Commands.
 	// When a Command is created with the New operator, its constructor is called. When the
 	// command is added to the Scheduler to be run, its initialize method is called. Then on
@@ -227,29 +207,20 @@ public class RobotContainer
 		winch = new Winch();
 		arm = new Arm();
 		claw = new Claw();
-		
 
 		// Create any persistent commands.
-		holdWinchPosition = new HoldWinchPosition(winch);
-		highTagPos = new ArmWinchPresets(arm, winch, highTag);
-		lowTagPos = new ArmWinchPresets(arm, winch, lowTag);
-		highPolePos = new ArmWinchPresets(arm, winch, highPole);
-		lowPolePos = new ArmWinchPresets(arm, winch, lowPole);
-		grabbingPos = new ArmWinchPresets(arm, winch, grabbing);
 
-		/* 
 		dropArm = new DropArm(winch, arm);
 		retractArm = new RetractArm(arm);
 		openClaw = new OpenClaw(claw);
-		closeClawCone = new CloseClaw(claw, 13000);
+		closeClawCone = new CloseClaw(claw, 13500);
 		closeClawCube = new  CloseClaw(claw, 3000);
-		raiseArm1 = new RaiseArm(winch, 100);
-		raiseArm2 = new RaiseArm(winch, 200);
-		extendArm1 = new ExtendArm(arm, 200);
-		extendArm2 = new ExtendArm(arm, 300);
+		raiseArm1 = new RaiseArm(winch, 61);
+		raiseArm2 = new RaiseArm(winch, 61);
+		extendArm1 = new ExtendArm(arm, 180);
+		extendArm2 = new ExtendArm(arm, 430);
 		raiseArmStart = new RaiseArmStart(winch);
-		
-		*/
+
 		// Set any subsystem Default commands.
 
 		// Set the default drive command. This command will be scheduled automatically to run
@@ -334,15 +305,15 @@ public class RobotContainer
         // being done while we are getting started up. Hopefully will complete before we are ready to
         // use the trajectory.
 		
-		NotifierCommand loadTrajectory = new NotifierCommand(this::loadTestTrajectory, 0);
-        loadTrajectory.setRunWhenDisabled(true);
-        CommandScheduler.getInstance().schedule(loadTrajectory);
+		// NotifierCommand loadTrajectory = new NotifierCommand(this::loadTestTrajectory, 0);
+        // loadTrajectory.setRunWhenDisabled(true);
+        // CommandScheduler.getInstance().schedule(loadTrajectory);
 		
-		//testTrajectory = loadTrajectoryFile("Slalom-1.wpilib.json");
+		// //testTrajectory = loadTrajectoryFile("Slalom-1.wpilib.json");
 		
-		loadTrajectory = new NotifierCommand(this::loadPPTestTrajectory, 0);
-        loadTrajectory.setRunWhenDisabled(true);
-        CommandScheduler.getInstance().schedule(loadTrajectory);
+		// loadTrajectory = new NotifierCommand(this::loadPPTestTrajectory, 0);
+        // loadTrajectory.setRunWhenDisabled(true);
+        // CommandScheduler.getInstance().schedule(loadTrajectory);
 
 		//PathPlannerTrajectory ppTestTrajectory = loadPPTrajectoryFile("richard");
 	}
@@ -375,25 +346,31 @@ public class RobotContainer
     	new Trigger(() -> driverPad.getBackButton())
         	.onTrue(new InstantCommand(driveBase::toggleFieldOriented));
 		
+		// NOTE: Left bumper engages "slow" mode and is defined in DriveCommand.
+
 		// Change camera feed. 
 		new Trigger(() -> driverPad.getRightBumper())
     		.onTrue(new InstantCommand(cameraFeed::ChangeCamera));
 
 		// Reset yaw angle to zero.
-		new Trigger(() -> driverPad.getAButton())
+		new Trigger(() -> driverPad.getPOVAngle(180))
     		.onTrue(new InstantCommand(driveBase::resetYaw));
 
 		// Toggle drive motors between brake and coast.
 		new Trigger(() -> driverPad.getBButton())
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 
-		// Reset drive wheel distance traveled.
+		// Set drive wheels to parking orientation.
 		new Trigger(() -> driverPad.getXButton())
+    		.onTrue(new ParkWheels(driveBase));
+
+		// Reset drive wheel distance traveled.
+		new Trigger(() -> driverPad.getPOVAngle(270))
     		.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
 
 		// Apply holding voltage to winch.
-		new Trigger(() -> driverPad.getRightTrigger()).toggleOnTrue(holdWinchPosition);
-	 
+		new Trigger(() -> driverPad.getRightTrigger()).toggleOnTrue(new HoldWinchPosition(winch));
+		
 		// -------- Utility pad buttons ----------
 		// What follows is an example from 2022 robot:
 		// Toggle extend Pickup.
@@ -409,7 +386,7 @@ public class RobotContainer
 		// So any function that operates valves will trigger the watchdogs. Again, the watchdog 
 		// notifications are only a warning (though too much delay on main thread can effect robot
 		// operation) they can fill the Riolog to the point it is not useful.
-		// Note: the threaded command can only execute a run(((((nable (function on a class) not a Command.
+		// Note: the threaded command can only execute a runable (function on a class) not a Command.
 		
 		// Toggle pickup deployment
 		//new Trigger(() -> utilityPad.getLeftBumper())
@@ -421,13 +398,13 @@ public class RobotContainer
 		new Trigger(() -> utilityPad.getPOVAngle(0)).toggleOnTrue(raiseArmStart);
 
 		// Start or stop (if already in progress), the command to drop arm to low position.
-		new Trigger(() -> utilityPad.getRightBumper()).toggleOnTrue(grabbingPos);
+		new Trigger(() -> utilityPad.getRightBumper()).toggleOnTrue(dropArm);
 
 		// Start or stop (if already in progress), the command to retract arm to inward position.
-		//new Trigger(() -> utilityPad.getPOVAngle(180)).toggleOnTrue(retractArm);
+		new Trigger(() -> utilityPad.getPOVAngle(180)).toggleOnTrue(retractArm);
 
 		// Start or stop (if already in progress), the command to fully open the claw.
-		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(new SetClawState(claw, ));
+		new Trigger(() -> utilityPad.getRightTrigger()).toggleOnTrue(openClaw);
 
 		// Start or stop (if already in progress), the command to close claw on cube.
 		new Trigger(() -> utilityPad.getLeftBumper()).toggleOnTrue(closeClawCube);

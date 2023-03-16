@@ -1,7 +1,7 @@
 package Team4450.Robot23.commands;
 
-import Team4450.Robot23.subsystems.Arm;
-import Team4450.Robot23.subsystems.Winch;
+import Team4450.Robot23.subsystems.JArm;
+import Team4450.Robot23.subsystems.JWinch;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class ArmWinchSetPose extends CommandBase{
 
     private double                  radians, radius;
-    private int                  targetExtend, targetRotate;
+    private int                     targetExtend, targetRotate;
     
     private Pose2d                  targetPose;
-    private Arm                     arm;
-    private Winch                   winch;
+    private JArm                     arm;
+    private JWinch                   winch;
 
     private SequentialCommandGroup	commands = null;
 	private Command					command = null;
 
-    public ArmWinchSetPose(Arm arm, Winch winch, Pose2d targetPose){
+    public ArmWinchSetPose(JArm arm, JWinch winch, Pose2d targetPose){
         this.arm = arm;
         this.winch = winch;
         this.targetPose = targetPose;

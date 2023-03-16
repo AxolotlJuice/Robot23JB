@@ -1,107 +1,78 @@
 package Team4450.Robot23.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static Team4450.Robot23.Constants.*;
 
-public class Winch extends SubsystemBase{
+public class Winch  extends SubsystemBase
+{
+    private CANSparkMax     motor = new CANSparkMax(WINCH_MOTOR, MotorType.kBrushless);
+    private RelativeEncoder encoder = motor.getEncoder();
+    private DigitalInput    lowerLimitSwitch = new DigitalInput(WINCH_SWITCH_LOWER);
+    private DigitalInput    upperLimitSwitch = new DigitalInput(WINCH_SWITCH_UPPER);
 
-    private double                  elapsedTime, power;
+    private final double    WINCH_MAX = 116;    // Revolutions.
 
-    private final double            tolerance = .5, maxPower = .30;
-
-    private SynchronousPID          pid = new SynchronousPID(.01, 0, 0);
-
-    private CANSparkMax             winchMotor = new CANSparkMax(14, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private RelativeEncoder         encoder = winchMotor.getEncoder();
-    private DigitalInput            lowerLimitSwitch = new DigitalInput(WINCH_SWITCH_LOWER);
-    private DigitalInput            upperLimitSwitch = new DigitalInput(WINCH_SWITCH_UPPER);
-
-    private final double            WINCH_MAX = 116; //revolutions
-
-    
-    public Winch(){
-        Util.consoleLog("Winch Created!");
-    }
-
-    public void initialize(){
-        
-
+    public Winch()
+    {
         Util.consoleLog();
 
+        // Winch will start at max up position so that is encoder zero. Encoder max will
+        // be winch at lowest position.
+
+        encoder.setPosition(0);
     }
 
-    public void periodic(){
+    /**
+     * Set winch power.
+     * @param power + is up, - is down.
+     */
+    public void setPower(double power)
+    {
+        // If power negative, which means go down, check limit switch stop if true.
+        // If power positive, which means go up, check limit for max height, stop if true.
+
+        if ((power < 0 && lowerLimitSwitch.get()) || (power > 0 && upperLimitSwitch.get())) power = 0;
         
-    }
+        //if (power > 0 && upperLimitSwitch.get()) power = 0;
 
-    public void setWinchCounts(int counts, double startSpeed){
-        
-        pid.setSetpoint(counts);
+        //if ((power < 0 && encoder.getPosition() >= WINCH_MAX) || (power > 0 && encoder.getPosition() <= 0)) power = 0;
 
-        pid.setOutputRange(-maxPower, maxPower);
+        if (upperLimitSwitch.get() || lowerLimitSwitch.get()) encoder.setPosition(0);
 
-        while(pid.onTarget(tolerance)){
-        
-            elapsedTime = Util.getElaspedTime();
+        power = Util.clampValue(power, .70);
 
-            power = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
-
-            power = Util.clampValue(power, .70);
-
-            winchMotor.set(power);
-        }
-    }
-
-    public void AutonSetWinchCounts(int counts, double startSpeed){
-        
-        pid.setSetpoint(counts);
-
-        pid.setOutputRange(counts, startSpeed);
-
-        while(pid.onTarget(tolerance)){
-        
-            elapsedTime = Util.getElaspedTime();
-
-            power = pid.calculate(winchMotor.getEncoder().getPosition(), elapsedTime);
-
-            power = Util.clampValue(power, .70);
-
-            winchMotor.set(power);
-        }
-
-        holdPosition();
+        motor.set(power);
     }
 
     public void stop()
     {
-        winchMotor.stopMotor();
+        motor.stopMotor();
     }
 
-    public void setPower(double power){
-        winchMotor.set(power);
-    }
-
-    public CANSparkMax getMotor(){
-        return winchMotor;
-    }
-
-    public double getPosition(){
-        return winchMotor.getEncoder().getPosition();
-    }
-
-    public void holdPosition()
+    /**
+     * Return Winch encoder position. Note winch encoder counts up (+) when power
+     * is + (going up) and down (-) when power is - (going down).
+     * @return Position in revolutions.
+     */
+    public double getPosition()
     {
-        winchMotor.set(.10);
+        return encoder.getPosition();
     }
-//-----------------------------------------------------------------------------------------------------
+
+    /**
+     * Reset Winch encoder to zero.
+     */
+    public void resetPosition()
+    {
+        encoder.setPosition(0);
+    }
 
     /**
      * Returns state of lower position limit switch.
@@ -119,5 +90,15 @@ public class Winch extends SubsystemBase{
     public boolean getUpperSwitch()
     {
         return upperLimitSwitch.get();
+    }
+
+    public void holdPosition()
+    {
+        setPower(.10);
+    }
+
+    public void updateDS()
+    {
+
     }
 }

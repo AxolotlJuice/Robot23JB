@@ -1,108 +1,90 @@
 package Team4450.Robot23.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import Team4450.Lib.SynchronousPID;
-import Team4450.Lib.Util;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import Team4450.Lib.Util;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static Team4450.Robot23.Constants.*;
 
-public class Arm extends SubsystemBase{
-
-    private double                  radius, radians, targetExtend, targetRotate, currentSpeed, elapsedTime;
-
-    private SynchronousPID          pid;
-
-    //channel tbd
-    private CANSparkMax             armMotor = new CANSparkMax(13, CANSparkMaxLowLevel.MotorType.kBrushless);
-
+public class Arm extends SubsystemBase
+{
+    private CANSparkMax     motor = new CANSparkMax(ARM_MOTOR, MotorType.kBrushless);
+    private RelativeEncoder encoder = motor.getEncoder();
     private DigitalInput    limitSwitch = new DigitalInput(ARM_SWITCH);
 
-    private Command			        command = null;
-    private SequentialCommandGroup  commands = null; 
+    private final double    ARM_MAX = 460;  // Revolutions of motor, not spool due to gearbox.
 
-    public Arm(){
-        Util.consoleLog("Arm created!");
-    }
-
-    public void initialize(){
-        
-        armMotor.getEncoder().getPosition();
-
+    public Arm()
+    {
         Util.consoleLog();
+
+        // Arm will start all the way retracted and that is encoder zero.
+        // Encoder max will represent arm fully extended.
+
+        resetPosition();
     }
 
-    public void periodic(){
+    /**
+     * Set Arm motor power.
+     * @param power -1..+1, + is retract arm, - is extend arm.
+     */
+    public void setPower(double power)
+    {
+        // If power positive, which means retract, check limit switch stop if true.
+        // If power negative, which means extend, check encoder for max extend, stop if there.
+
+        //if ((power > 0 && limitSwitch.get()) || (power < 0 && encoder.getPosition() >= ARM_MAX)) power = 0;
+
+        //if ((power > 0 && encoder.getPosition() <= 0) || (power < 0 && encoder.getPosition() >= ARM_MAX)) power = 0;
         
-    }
+        if ((power < 0 && encoder.getPosition() >= ARM_MAX)) power = 0;
 
-    
-    public void setArmCounts(int counts, double startSpeed){
+        //if (limitSwitch.get()) encoder.setPosition(0);
+
+        power = Util.clampValue(power, 1.0);
         
-        pid.setSetpoint(counts);
+        // Invert since they put the rope on the spools the wrong way...
 
-        while(armMotor.getEncoder().getVelocity() != 0.0){
-        
-            elapsedTime = Util.getElaspedTime();
-
-            currentSpeed = pid.calculate(armMotor.getEncoder().getPosition(), elapsedTime);
-
-            armMotor.set(currentSpeed);
-        }
-    }
-    
-    public void setPower(double power){
-        armMotor.set(power);
+        motor.set(-power);
     }
 
-    public CANSparkMax getMotor(){
-        return armMotor;
+    public void stop()
+    {
+        motor.stopMotor();
     }
 
-    public void setToPreset(){
-        
+    /**
+     * Return Arm encoder position.
+     * @return Position in revolutions.
+     */
+    public double getPosition()
+    {
+        return encoder.getPosition();
     }
 
-    /* 
-    public void setArmPose(double power, Pose2d targetPose){
-        
-        //Uses math to determine the robot's radius and radians 
-        radius = targetPose.getX()/Math.acos(targetPose.getX());
-        radians = Math.asin(targetPose.getY()/radius);
-
-        //set position coversion factor by measure the distance extended after one revolution
-        targetExtend = armMotor1.getEncoder().getPositionConversionFactor() * radius;
-
-        targetRotate = armMotor2.getEncoder().getCountsPerRevolution() * (radians/(2 * Math.PI));
-
-        commands = new SequentialCommandGroup();
-
-        command = new SimultaneousArmPID(armMotor1, armMotor2, targetExtend, targetRotate);
-        commands.addCommands(command);
-
-        commands.schedule();
+    /**
+     * Reset Arm encoder to zero.
+     */
+    public void resetPosition()
+    {
+        encoder.setPosition(0);
     }
 
-    public void setArmAction(double ticksRotate, double distExtension){
-        
-        targetExtend = distExtension;
-
-        targetRotate = ticksRotate;
-        
-        commands = new SequentialCommandGroup();
-
-        command = new SimultaneousArmPID(armMotor1, armMotor2, targetExtend, targetRotate);
-        commands.addCommands(command);
-
-        commands.schedule();
+    /**
+     * Return Arm retracted limit switch state.
+     * @return True if switch contacted (arm fully retracted).
+     */
+    public boolean getSwitch()
+    {
+        return limitSwitch.get();
     }
-    */
 
+    public void updateDS()
+    {
+
+    }
 }

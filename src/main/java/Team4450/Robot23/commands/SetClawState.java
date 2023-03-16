@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import Team4450.Lib.FXEncoder;
 import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
-import Team4450.Robot23.subsystems.Claw;
+import Team4450.Robot23.subsystems.JClaw;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import Team4450.Robot23.Constants.*;
 
@@ -13,7 +13,7 @@ public class SetClawState extends CommandBase  {
     private SynchronousPID          pidCon = new SynchronousPID(0, 0, 0);
     private ClawPosition            targetPosi;
 
-    private Claw                    claw;
+    private JClaw                    claw;
 
     private WPI_TalonFX             motor;
     private FXEncoder               encoder;
@@ -22,7 +22,7 @@ public class SetClawState extends CommandBase  {
     private double                  power;
     private double                  tolerance = .5;
 
-    public SetClawState(Claw claw, ClawPosition targetPosi){
+    public SetClawState(JClaw claw, ClawPosition targetPosi){
         this.claw = claw;
         this.targetPosi = targetPosi;
         

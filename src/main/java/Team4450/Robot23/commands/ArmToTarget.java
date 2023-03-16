@@ -4,14 +4,14 @@ import com.revrobotics.CANSparkMax;
 
 import Team4450.Lib.SynchronousPID;
 import Team4450.Lib.Util;
-import Team4450.Robot23.subsystems.Arm;
+import Team4450.Robot23.subsystems.JArm;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class ArmToTarget extends CommandBase  {
     
     private SynchronousPID          pidCon = new SynchronousPID(0, 0, 0);
 
-    private Arm                     arm;
+    private JArm                     arm;
 
     private CANSparkMax             motor;
     
@@ -19,7 +19,7 @@ public class ArmToTarget extends CommandBase  {
     private double                  targetCounts, power;
     private double                  tolerance = .5;
 
-    public ArmToTarget(Arm arm, int targetCounts){
+    public ArmToTarget(JArm arm, int targetCounts){
         this.arm = arm;
         this.targetCounts = targetCounts;
         

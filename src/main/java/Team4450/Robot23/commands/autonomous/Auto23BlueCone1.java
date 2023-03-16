@@ -6,7 +6,6 @@ import org.photonvision.PhotonPoseEstimator;
 import Team4450.Lib.SynchronousPID;
 import Team4450.Robot23.Constants;
 import Team4450.Robot23.commands.AutoScoreVis;
-import Team4450.Robot23.commands.ArmWinchPresets.Preset;
 import Team4450.Robot23.subsystems.Arm;
 import Team4450.Robot23.subsystems.Claw;
 import Team4450.Robot23.subsystems.DriveBase;

@@ -166,7 +166,7 @@ public final class Constants
     // public static final double  DB_VELOCITY_KP = .12;  
     // public static final double  DB_VELOCITY_KD = 0.0;
 
-    private final AprilTagFieldLayout aprilFieldLayout = new AprilTagFieldLayout(Arrays.asList(
+    public final AprilTagFieldLayout APRILTAGFIELDLAYOUT = new AprilTagFieldLayout(Arrays.asList(
     new AprilTag(1, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(2, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(3, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),

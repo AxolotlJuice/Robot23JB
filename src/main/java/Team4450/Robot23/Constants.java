@@ -166,7 +166,9 @@ public final class Constants
     // public static final double  DB_VELOCITY_KP = .12;  
     // public static final double  DB_VELOCITY_KD = 0.0;
 
-    public final AprilTagFieldLayout APRILTAGFIELDLAYOUT = new AprilTagFieldLayout(Arrays.asList(
+    //-------------------- No student code above this line ------------------------------------------------------
+
+    public static final AprilTagFieldLayout APRILTAGFIELDLAYOUT = new AprilTagFieldLayout(Arrays.asList(
     new AprilTag(1, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(2, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
     new AprilTag(3, new Pose3d(Units.inchesToMeters(610.77), Units.inchesToMeters(174.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, Math.PI))),
@@ -176,10 +178,6 @@ public final class Constants
     new AprilTag(7, new Pose3d(Units.inchesToMeters( 40.45), Units.inchesToMeters(108.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, 0.0))),
     new AprilTag(8, new Pose3d(Units.inchesToMeters( 40.45), Units.inchesToMeters( 42.19), Units.inchesToMeters(18.22), new Rotation3d(0.0, 0.0, 0.0)))
   ), Units.inchesToMeters(651.25), Units.inchesToMeters(315.5));
-
-
-
-  //-------------------- No student code above this line ------------------------------------------------------
 
   public static final List<Pole> poleLayout = Arrays.asList(
     new Pole(1, new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, Math.PI))),

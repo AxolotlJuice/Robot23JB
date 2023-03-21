@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import Team4450.Robot23.subsystems.Arm;
 import Team4450.Robot23.subsystems.JClaw;
+import Team4450.Robot23.subsystems.JWinch;
 import Team4450.Robot23.subsystems.DriveBase;
+import Team4450.Robot23.subsystems.JArm;
 import Team4450.Robot23.subsystems.LimeLight;
 import Team4450.Robot23.subsystems.Winch;
 import Team4450.Robot23.Constants.*;
@@ -41,8 +43,8 @@ public class AutoScoreVis extends CommandBase {
 
     private boolean             targetLocked, hadTargets;
 
-    private Arm                 arm;
-    private Winch               winch;
+    private JArm                 arm;
+    private JWinch               winch;
     private JClaw                claw;
     private DriveBase           sDriveBase;
     private PhotonCamera        phCamera;
@@ -60,7 +62,7 @@ public class AutoScoreVis extends CommandBase {
     private LimeLight           limeLight = new LimeLight();
 
     private Rect                targetTape;    
-    private Preset              armTargetPose;
+    private Preset              armTarget;
 
     private SequentialCommandGroup	commands = null;
 	private Command					command = null;
@@ -71,7 +73,8 @@ public class AutoScoreVis extends CommandBase {
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
                             Preset armTargetPose,
-                            Translation3d limeLightToCenter)
+                            Translation3d limeLightToCenter,
+                            Preset armTarget)
     {
        
         this.phCamera = phCamera;
@@ -79,6 +82,7 @@ public class AutoScoreVis extends CommandBase {
         this.phPoseEstimator = phPoseEstimator;
         this.tagLayout = tagLayout;
         this.limeLightToCenter = limeLightToCenter;
+        this.armTarget = armTarget;
 
     }
 
@@ -168,7 +172,7 @@ public class AutoScoreVis extends CommandBase {
             Util.consoleLog("No visable target & no previous targets.");
             Util.consoleLog("PhotonHasTargets:%b, LimeHasTargets:%b, HadTargets:%b, ClawPosition:%s", 
                             result.hasTargets(), limeLight.targetVisible(), hadTargets, claw.getClawState().name());
-            end();
+            end(true);
             
         }
     }
@@ -179,7 +183,7 @@ public class AutoScoreVis extends CommandBase {
 
     }
 
-    public void end(){
+    public void end(boolean interrupted){
         //score with arm
         /* 
         commands = new SequentialCommandGroup();
@@ -189,6 +193,12 @@ public class AutoScoreVis extends CommandBase {
         */
 
         //resets hadTargets
+        if(interrupted){
+
+        }
+        else{
+            commands.addCommands(new ArmWinchPresets(arm, winch, armTarget));
+        }
         hadTargets = false;
     }
 }

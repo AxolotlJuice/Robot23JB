@@ -6,6 +6,9 @@ import static Team4450.Robot23.Constants.*;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -15,6 +18,7 @@ import Team4450.Lib.XboxController;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
+import Team4450.Robot23.commands.AimBot;
 import Team4450.Robot23.commands.CloseClaw;
 import Team4450.Robot23.commands.DriveArm;
 import Team4450.Robot23.commands.DriveClaw;
@@ -65,11 +69,13 @@ public class RobotContainer
 {
 	// Subsystems.
 
-	public static ShuffleBoard	shuffleBoard;
-	public static DriveBase 	driveBase;
-	public static Winch			winch;
-	public static Arm			arm;
-	public static Claw			claw;
+	public static ShuffleBoard			shuffleBoard;
+	public static DriveBase 			driveBase;
+	public static Winch					winch;
+	public static Arm					arm;
+	public static Claw					claw;
+	public static PhotonCamera  		phCamera;
+	public static PhotonPoseEstimator	phPoseEstimator;
 
 	// Subsystem Default Commands.
 
@@ -82,6 +88,9 @@ public class RobotContainer
 	private CloseClaw			closeClawCube, closeClawCone;
 	private ExtendArm			extendArm1, extendArm2;
 	private RaiseArmStart		raiseArmStart;
+	private AimBot		aimBot;
+	
+	private Preset				targetArmPose = temp;
 	//private HoldWinchPosition	holdWinchPosition;
 
 	// Some notes about Commands.
@@ -370,6 +379,16 @@ public class RobotContainer
 
 		// Apply holding voltage to winch.
 		new Trigger(() -> driverPad.getRightTrigger()).toggleOnTrue(new HoldWinchPosition(winch));
+
+		new Trigger(() -> driverPad.getYButton())
+			.onTrue(new AimBot(phCamera,
+										driveBase,
+										APRILTAGFIELDLAYOUT, 
+										phPoseEstimator,
+										LIMETOCENTER, 
+										targetArmPose));
+
+		
 		
 		// -------- Utility pad buttons ----------
 		// What follows is an example from 2022 robot:

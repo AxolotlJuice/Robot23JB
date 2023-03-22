@@ -48,9 +48,10 @@ Port	Device blk-pos	Description
 Digital I/O Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-0       Limit Switch    Winch reset.
-1       Limit Switch    ARM reset.
-2       Limit Switch    Claw reset.
+0       Limit Switch    Winch lower reset.
+1       Limit Switch    Winch upper reset.
+2       Limit Switch    ARM reset.
+3       Limit Switch    Claw reset.
 
 
 Analog I/O Ports
@@ -100,6 +101,16 @@ X Axis                  Claw Open/Close, right (+) is close, left is open.
 Utility GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
+POV_0                   Raise arm to starting position.
+POV_180                 Fully retract arm.
+RIGHT_TRIGGER           Fully open claw.
+LEFT_TRIGGER            Close claw on cone.
+LEFT_BUMPER             Close claw on cube.
+RIGHT_BUMPER            Drop arm to lowest position.
+Y                       Move arm to scoring position 1.
+X                       Move arm to scoring position 2.
+B                       Extend arm to scoring position 1.
+A                       Extend arm to scoring position 2.
 
 
 Dashboard Indicators/Controls

@@ -32,7 +32,7 @@ import org.opencv.core.Rect;
 import edu.wpi.first.wpilibj.Timer;
 
 
-public class AutoScoreVis extends CommandBase {
+public class AimBot extends CommandBase {
 
     //kEndGoalY is temporary
     private static double       kP = .02, kI = .02, kD = 0, kEndGoalY = 0.0, kP2 = .02, kI2 = .02, kD2 = 0;
@@ -68,11 +68,10 @@ public class AutoScoreVis extends CommandBase {
 	private Command					command = null;
 
 
-    public AutoScoreVis(PhotonCamera phCamera,
+    public AimBot(PhotonCamera phCamera,
                             DriveBase sDriveBase,
                             AprilTagFieldLayout tagLayout,
                             PhotonPoseEstimator phPoseEstimator,
-                            Preset armTargetPose,
                             Translation3d limeLightToCenter,
                             Preset armTarget)
     {

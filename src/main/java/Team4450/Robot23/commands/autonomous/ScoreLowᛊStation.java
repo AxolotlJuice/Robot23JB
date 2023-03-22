@@ -153,7 +153,7 @@ public class ScoreLowᛊStation extends CommandBase
 		commands.addCommands(new DriveDist(driveBase, 2.5109439748, Math.PI, 1.2));
 
 		commands.addCommands(new DriveDist(driveBase, 60.35071, Math.PI, 1.2));
-		//chrg to score line: 58.686855   charge stat m: 38.0631455
+		//chrg to score line: 58.686855   charge stat m: 38.0631455  1.082675
 		// Launch autonomous command sequence.
 		
 		commands.schedule();
